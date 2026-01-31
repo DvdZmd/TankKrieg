@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="TankKrieg/TankKrieg.vcxproj" />
+  <Project Path="TankKrieg/TankKrieg.vcxproj" Id="26f819c7-0a32-4b2c-8678-4d9863cbcc9f" />
 </Solution>
