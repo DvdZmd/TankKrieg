@@ -1,6 +1,6 @@
+#pragma once
 #include <SDL3/SDL.h>
 #include "Input/InputManager.h"
-
 
 class Krieg {
 public:
@@ -22,4 +22,11 @@ private:
 	SDL_Renderer* renderer = nullptr;
 
 	InputManager input;
+
+
+	// Sandbox: isometric grid cursor (tile highlight) TODO: If this growsup should be a class
+	int cursorX = 0;
+	int cursorY = 0;
+	static constexpr int gridW = 10;
+	static constexpr int gridH = 10;
 };

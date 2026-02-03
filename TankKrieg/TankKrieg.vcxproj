@@ -30,6 +30,7 @@
     <ClInclude Include="src\Entities\Unit.h" />
     <ClInclude Include="src\Input\InputManager.h" />
     <ClInclude Include="src\Krieg.h" />
+    <ClInclude Include="src\Math\Int2.h" />
     <ClInclude Include="src\Math\Vector2.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

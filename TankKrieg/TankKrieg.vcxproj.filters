@@ -47,5 +47,8 @@
     <ClInclude Include="src\Entities\Unit.h">
       <Filter>src\Entities</Filter>
     </ClInclude>
+    <ClInclude Include="src\Math\Int2.h">
+      <Filter>src\Math</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
