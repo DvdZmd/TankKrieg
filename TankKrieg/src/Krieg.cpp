@@ -1,58 +1,7 @@
 #include "Krieg.h"
+#include "Math/IsoUtils.h"
+#include "Render/IsoDebugDraw.h"
 #include <iostream>
-
-struct Point {
-    float x, y;
-};
-
-static Point GridToScreen(int gx, int gy, int tileW, int tileH, int originX, int originY)
-{
-    float sx = originX + (gx - gy) * (tileW * 0.5f);
-    float sy = originY + (gx + gy) * (tileH * 0.5f);
-    return { sx, sy };
-}
-
-static void FillIsoDiamond(SDL_Renderer* r, float cx, float cy, int tileW, int tileH)
-{
-    SDL_Vertex verts[4];
-
-    SDL_FPoint top = { cx,              cy - tileH * 0.5f };
-    SDL_FPoint right = { cx + tileW * 0.5f, cy };
-    SDL_FPoint bottom = { cx,              cy + tileH * 0.5f };
-    SDL_FPoint left = { cx - tileW * 0.5f, cy };
-
-    // SDL_Vertex: position + color + tex_coord (tex_coord puede ser 0)
-    verts[0].position = top;    verts[0].tex_coord = { 0,0 };
-    verts[1].position = right;  verts[1].tex_coord = { 0,0 };
-    verts[2].position = bottom; verts[2].tex_coord = { 0,0 };
-    verts[3].position = left;   verts[3].tex_coord = { 0,0 };
-
-    // El color viene del renderer? No. En RenderGeometry el color es por vértice.
-    // Lo setearás desde afuera antes llamando SDL_SetRenderDrawColor?
-    // No afecta RenderGeometry. Hay que setearlo en cada vértice.
-    // Por eso la función asume que querés rojo sólido:
-    SDL_FColor c = { 1.0f, 0.0f, 0.0f, 0.35f }; // rojo con alpha (0.35)
-    for (int i = 0; i < 4; ++i) verts[i].color = c;
-
-    // 2 triángulos: (top,right,bottom) y (top,bottom,left)
-    int indices[6] = { 0, 1, 2,  0, 2, 3 };
-
-    SDL_RenderGeometry(r, nullptr, verts, 4, indices, 6);
-}
-
-
-static void DrawIsoDiamond(SDL_Renderer* r, float cx, float cy, int tileW, int tileH)
-{
-    SDL_FPoint top = { cx,              cy - tileH * 0.5f };
-    SDL_FPoint right = { cx + tileW * 0.5f, cy };
-    SDL_FPoint bottom = { cx,              cy + tileH * 0.5f };
-    SDL_FPoint left = { cx - tileW * 0.5f, cy };
-
-    SDL_RenderLine(r, top.x, top.y, right.x, right.y);
-    SDL_RenderLine(r, right.x, right.y, bottom.x, bottom.y);
-    SDL_RenderLine(r, bottom.x, bottom.y, left.x, left.y);
-    SDL_RenderLine(r, left.x, left.y, top.x, top.y);
-}
 
 Krieg::Krieg() {}
 
@@ -134,22 +83,22 @@ void Krieg::Render() {
     SDL_SetRenderDrawColor(renderer, 220, 220, 220, 255);
 
     // Draw base grid
-    for (int gy = 0; gy < gridW; gy++) {
-        for (int gx = 0; gx < gridH; gx++) {
-            Point p = GridToScreen(gx, gy, tileW, tileH, originX, originY);
-            DrawIsoDiamond(renderer, p.x, p.y, tileW, tileH);
+    for (int gy = 0; gy < gridH; gy++) {
+        for (int gx = 0; gx < gridW; gx++) {
+            SDL_FPoint p = IsoUtils::GridToScreen(gx, gy, tileW, tileH, originX, originY);
+            IsoDebugDraw::DrawIsoDiamondOutline(renderer, p.x, p.y, tileW, tileH);
         }
     }
 
     // Highlight selected tile (cursor)
     SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
-    Point c = GridToScreen(cursorX, cursorY, tileW, tileH, originX, originY);
+    SDL_FPoint c = IsoUtils::GridToScreen(cursorX, cursorY, tileW, tileH, originX, originY);
     // relleno rojo semitransparente
-    FillIsoDiamond(renderer, c.x, c.y, tileW, tileH);
+    IsoDebugDraw::FillIsoDiamond(renderer, c.x, c.y, tileW, tileH);
 
     // borde rojo más fuerte arriba (opcional)
     SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
-    DrawIsoDiamond(renderer, c.x, c.y, tileW, tileH);
+    IsoDebugDraw::DrawIsoDiamondOutline(renderer, c.x, c.y, tileW, tileH);
 
 
     SDL_RenderPresent(renderer);

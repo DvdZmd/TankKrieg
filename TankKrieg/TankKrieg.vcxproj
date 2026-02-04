@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Entities\Entity.cpp" />
     <ClCompile Include="src\Entities\Unit.cpp" />
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\Krieg.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Entities\Entity.h" />
@@ -33,6 +33,7 @@
     <ClInclude Include="src\Math\Int2.h" />
     <ClInclude Include="src\Math\IsoUtils.h" />
     <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Render\IsoDebugDraw.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

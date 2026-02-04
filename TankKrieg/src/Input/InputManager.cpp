@@ -1,4 +1,5 @@
 #include "InputManager.h"
+#include "Math/IsoUtils.h"
 #include <cmath>
 
 static Int2 QuantizeStickTo8Visual(const Vector2& v, float dz)
@@ -9,23 +10,6 @@ static Int2 QuantizeStickTo8Visual(const Vector2& v, float dz)
 	s.x = (v.x > dz) ? 1 : (v.x < -dz ? -1 : 0);
 	s.y = (v.y > dz) ? 1 : (v.y < -dz ? -1 : 0);
 	return s; // esto es “visual”: x=izq/der, y=arr/ab en pantalla
-}
-
-static Int2 VisualToIsoGridStep(const Int2& v)
-{
-	// 4-dir
-	if (v.x == 0 && v.y == -1) return { -1,-1 }; // up
-	if (v.x == 0 && v.y == 1) return { 1, 1 }; // down
-	if (v.x == -1 && v.y == 0) return { -1, 1 }; // left
-	if (v.x == 1 && v.y == 0) return { 1,-1 }; // right
-
-	// diagonales visuales
-	if (v.x == -1 && v.y == -1) return { -1, 0 }; // up-left
-	if (v.x == 1 && v.y == -1) return { 0,-1 }; // up-right
-	if (v.x == -1 && v.y == 1) return { 0, 1 }; // down-left
-	if (v.x == 1 && v.y == 1) return { 1, 0 }; // down-right
-
-	return { 0,0 };
 }
 
 static float ApplyDeadzone(float v, float dz) {
@@ -91,7 +75,7 @@ void InputManager::Update(float dt) {
 		cursorRepeatTimer += dt;
 		if (cursorRepeatTimer >= cursorRepeatDelay) {
 			cursorRepeatTimer = 0.0f;
-			cursorStep = VisualToIsoGridStep(analogStep);
+			cursorStep = IsoUtils::VisualToIsoGridStep(analogStep);
 		}
 	}
 	else {
