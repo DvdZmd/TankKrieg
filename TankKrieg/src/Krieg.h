@@ -12,7 +12,7 @@ public:
 	void Shutdown();
 
 private:
-	void ProcessInput();
+	void ProcessInput(float deltaTime);
 	void Update(float deltaTime);
 	void Render();
 
@@ -23,6 +23,13 @@ private:
 
 	InputManager input;
 
+	//tiles size
+	int tileWidth = 64;
+	int tileHeight = 64 / 2;
+
+	//Windows resolution
+	int kriegWidth = 800;	
+	int kriegHeight = 600;
 
 	// Sandbox: isometric grid cursor (tile highlight) TODO: If this growsup should be a class
 	int cursorX = 0;

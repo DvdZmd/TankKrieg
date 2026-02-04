@@ -67,7 +67,7 @@ bool Krieg::Initialize() {
         return false;
     }
 
-    window = SDL_CreateWindow("Tank Krieg", 800, 600, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Tank Krieg", kriegWidth, kriegHeight, SDL_WINDOW_RESIZABLE);
     if (!window) {
         std::cerr << "Window creation failed: " << SDL_GetError() << std::endl;
         return false;
@@ -94,22 +94,22 @@ void Krieg::Run() {
         float deltaTime = (currentTick - lastTick) / 1000.0f;
         lastTick = currentTick;
 
-        ProcessInput();
+        ProcessInput(deltaTime);
         Update(deltaTime);
         Render();
     }
 }
 
-void Krieg::ProcessInput() {
-    input.Update();
+void Krieg::ProcessInput(float deltaTime) {
+    input.Update(deltaTime);
     if (input.QuitRequested()) {
         isRunning = false;
     }
 }
 
-void Krieg::Update(float /*deltaTime*/) {
+void Krieg::Update(float deltaTime) {
     // Sandbox: move the grid cursor one tile per key press (or D-pad press).
-	Int2 step = input.GetCursorStep();
+    Int2 step = input.GetCursorStep();
     cursorX += step.x;
     cursorY += step.y;
 
@@ -124,11 +124,12 @@ void Krieg::Render() {
     SDL_SetRenderDrawColor(renderer, 25, 25, 25, 255);
     SDL_RenderClear(renderer);
 
-    const int tileW = 64;
-    const int tileH = tileW / 2;
+    const int tileW = tileWidth;
+    const int tileH = tileHeight;
 
-    const int originX = 400; // centro de tu ventana (ajustalo)
-    const int originY = 100; // un poco abajo del top para que se vea
+	//pixel coordinates of the origin (0,0) grid tile
+    const int originX = 400;
+    const int originY = 100;
 
     SDL_SetRenderDrawColor(renderer, 220, 220, 220, 255);
 
