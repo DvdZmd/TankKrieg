@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include "Input/InputManager.h"
+#include "Entities/Tank.h"
 
 class Krieg {
 public:
@@ -17,6 +18,9 @@ private:
 	void Render();
 
 private:
+
+	Tank playerTank;
+
 	bool isRunning = false;
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
@@ -36,4 +40,8 @@ private:
 	int cursorY = 0;
 	static constexpr int gridW = 10;
 	static constexpr int gridH = 10;
+
+	// DEBUG
+	float debugGX = 0.0f;
+	float debugGY = 0.0f;
 };

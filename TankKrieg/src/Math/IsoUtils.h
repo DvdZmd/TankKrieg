@@ -35,4 +35,65 @@ namespace IsoUtils
     {
         return GridToScreenF((float)gx, (float)gy, tileW, tileH, originX, originY);
     }
+
+    // Converts a continuous direction in VISUAL space (screen-like: +x right, +y down)
+    // into a continuous direction in ISO GRID space (gx, gy).
+    // The output is normalized (unless input is near zero).
+    inline Vector2 VisualDirToGridDir(const Vector2& visualDir, int tileW, int tileH)
+    {
+        // Safety
+        const float lenSq = visualDir.x * visualDir.x + visualDir.y * visualDir.y;
+        if (lenSq < 0.000001f) return { 0.0f, 0.0f };
+
+        // From isometric projection:
+        // sx = (gx - gy) * (tileW/2)
+        // sy = (gx + gy) * (tileH/2)
+        //
+        // Solve for gx, gy (up to scale):
+        // gx = 0.5 * ( sy/(tileH/2) + sx/(tileW/2) )
+        // gy = 0.5 * ( sy/(tileH/2) - sx/(tileW/2) )
+
+        const float a = tileW * 0.5f;
+        const float b = tileH * 0.5f;
+
+        // Treat visualDir as (sx, sy) direction
+        const float gx = 0.5f * ((visualDir.y / b) + (visualDir.x / a));
+        const float gy = 0.5f * ((visualDir.y / b) - (visualDir.x / a));
+
+        Vector2 gridDir{ gx, gy };
+
+        // Normalize output so speed isn't affected by diagonal magnitudes
+        const float glenSq = gridDir.x * gridDir.x + gridDir.y * gridDir.y;
+        if (glenSq > 0.000001f) {
+            const float invLen = 1.0f / SDL_sqrtf(glenSq);
+            gridDir.x *= invLen;
+            gridDir.y *= invLen;
+        }
+
+        return gridDir;
+    }
+
+    // Snaps a direction to 8-way in GRID space.
+    // Input should be a direction vector (any length). Output is {-1,0,1} in each axis,
+    // normalized to length 1 for diagonals as well.
+    inline Vector2 SnapGridDir8(const Vector2& gridDir, float deadzone = 0.2f)
+    {
+        const float lenSq = gridDir.x * gridDir.x + gridDir.y * gridDir.y;
+        if (lenSq < deadzone * deadzone) return { 0.0f, 0.0f };
+
+        int sx = (gridDir.x > 0.0f) ? 1 : (gridDir.x < 0.0f ? -1 : 0);
+        int sy = (gridDir.y > 0.0f) ? 1 : (gridDir.y < 0.0f ? -1 : 0);
+
+        Vector2 out{ (float)sx, (float)sy };
+
+        // Normalize diagonal
+        const float olenSq = out.x * out.x + out.y * out.y;
+        if (olenSq > 0.000001f) {
+            const float invLen = 1.0f / SDL_sqrtf(olenSq);
+            out.x *= invLen;
+            out.y *= invLen;
+        }
+        return out;
+    }
+
 }
