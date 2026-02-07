@@ -86,7 +86,13 @@ void Krieg::Update(float deltaTime) {
     const Vector2 move = input.GetMovementVector(); // left stick
     const Vector2 aim = input.GetAimVector();      // right stick
 
-    playerTank.Update(deltaTime, move, aim, tileWidth, tileHeight);
+    GridBounds b;
+    b.minX = 0.0f;
+    b.minY = 0.0f;
+    b.maxX = (float)gridW - 1.0f;
+    b.maxY = (float)gridH - 1.0f;
+
+    playerTank.Update(deltaTime, move, aim, b);
 }
 
 void Krieg::Render() {
@@ -126,8 +132,7 @@ void Krieg::Render() {
     // Highlight selected tile (cursor)
     SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
     SDL_FPoint c = IsoUtils::GridToScreen(cursorX, cursorY, tileW, tileH, originX, originY);
-    // relleno rojo semitransparente
-    IsoDebugDraw::FillIsoDiamond(renderer, c.x, c.y, tileW, tileH);
+    IsoDebugDraw::FillIsoDiamond(renderer, c.x, c.y, tileW, tileH);// relleno rojo semitransparente
 
     // borde rojo más fuerte arriba (opcional)
     SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
@@ -135,10 +140,10 @@ void Krieg::Render() {
 
 
 	//This is for testing, creates a cursor in the screen that moves in the isometric grid
-    SDL_FPoint p = IsoUtils::GridToScreenF(debugGX, debugGY, tileW, tileH, originX, originY);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    SDL_RenderLine(renderer, p.x - 5, p.y, p.x + 5, p.y);
-    SDL_RenderLine(renderer, p.x, p.y - 5, p.x, p.y + 5);
+    //SDL_FPoint p = IsoUtils::GridToScreenF(debugGX, debugGY, tileW, tileH, originX, originY);
+    //SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    //SDL_RenderLine(renderer, p.x - 5, p.y, p.x + 5, p.y);
+    //SDL_RenderLine(renderer, p.x, p.y - 5, p.x, p.y + 5);
 
 
 

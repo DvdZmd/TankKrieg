@@ -4,6 +4,7 @@
 #include "Render/IsoDebugDraw.h"
 #include <Render/Helper.h>
 
+
 static Int2 SnapVisual8(const Vector2& v, float deadzone = 0.25f)
 {
 	const float lenSq = v.x * v.x + v.y * v.y;
@@ -64,7 +65,7 @@ void Tank::SetGridPosition(float gx, float gy)
 	gridY = gy;
 }
 
-void Tank::Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual, int tileW, int tileH)
+void Tank::Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual, const GridBounds& bounds)
 {
 	// --- Hull movement: SNAP to 8 directions (visual), then map to grid
 	const Int2 moveSnap = SnapVisual8(moveVisual);
@@ -80,8 +81,24 @@ void Tank::Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual,
 		// Normalize grid step so diagonals don't move faster
 		const Vector2 gridDir = NormalizeStep(gridStep);
 
-		gridX += gridDir.x * moveSpeedTilesPerSec * dt;
-		gridY += gridDir.y * moveSpeedTilesPerSec * dt;
+		//gridX += gridDir.x * moveSpeedTilesPerSec * dt;
+		//gridY += gridDir.y * moveSpeedTilesPerSec * dt;
+
+		const float nextX = gridX + gridDir.x * moveSpeedTilesPerSec * dt;
+		const float nextY = gridY + gridDir.y * moveSpeedTilesPerSec * dt;
+
+		// X TODO IsWalkable there is no map
+		//if (map.IsWalkable((int)nextX, (int)gridY))
+		//	gridX = nextX;
+
+		//// Y
+		//if (map.IsWalkable((int)gridX, (int)nextY))
+		//	gridY = nextY;
+
+		gridX = Helper::ClampFloat(nextX, bounds.minX, bounds.maxX);
+		gridY = Helper::ClampFloat(nextY, bounds.minY, bounds.maxY);
+
+
 	}
 
 	// --- Turret aiming: ANALOG (N directions). No snapping here.
@@ -123,7 +140,7 @@ void Tank::Render(SDL_Renderer* renderer, int tileW, int tileH, int originX, int
 
 	SDL_SetRenderDrawColor(renderer, 80, 200, 120, 255);
 	//DrawTriangleOutline(renderer, ha, hb, hc);
-	RenderHelper::DrawTriangleThick(renderer, ha, hb, hc, 3.0f, SDL_FColor{ 80.0f / 255.0f, 200.0f / 255.0f, 120.0f / 255.0f, 1.0f });
+	Helper::DrawTriangleThick(renderer, ha, hb, hc, 3.0f, SDL_FColor{ 80.0f / 255.0f, 200.0f / 255.0f, 120.0f / 255.0f, 1.0f });
 
 	// --------------------
 	// Turret (smaller triangle + barrel line)
@@ -141,13 +158,13 @@ void Tank::Render(SDL_Renderer* renderer, int tileW, int tileH, int originX, int
 
 	SDL_SetRenderDrawColor(renderer, 40, 140, 220, 255);
 	//DrawTriangleOutline(renderer, ta, tb, tc);
-	RenderHelper::DrawTriangleThick(renderer, ta, tb, tc, 2.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
+	Helper::DrawTriangleThick(renderer, ta, tb, tc, 2.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
 
 	// Barrel
 	const float barrelLen = 26.0f;
 	SDL_FPoint muzzle{ p.x + tf.x * barrelLen, p.y + tf.y * barrelLen };
 	//SDL_RenderLine(renderer, p.x, p.y, muzzle.x, muzzle.y);
-	RenderHelper::DrawThickLine(renderer, p, muzzle, 3.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
+	Helper::DrawThickLine(renderer, p, muzzle, 3.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
 
 
 	// Optional: center dot

@@ -2,6 +2,14 @@
 #include <SDL3/SDL.h>
 #include "Math/Vector2.h"
 
+struct GridBounds
+{
+    float minX = 0.0f;
+    float minY = 0.0f;
+    float maxX = 0.0f; // inclusive (width - 1)
+    float maxY = 0.0f; // inclusive (height - 1)
+};
+
 class Tank
 {
 public:
@@ -10,7 +18,7 @@ public:
 
     // moveVisual: left stick (visual/screen space, normalized-ish)
     // aimVisual : right stick (visual/screen space, normalized-ish)
-    void Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual, int tileW, int tileH);
+    void Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual, const GridBounds& bounds);
 
     void Render(SDL_Renderer* renderer, int tileW, int tileH, int originX, int originY) const;
 

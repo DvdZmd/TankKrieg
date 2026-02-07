@@ -1,8 +1,10 @@
 #pragma once
 #include <SDL3/SDL.h>
 
-namespace RenderHelper
+namespace Helper
 {
+	float ClampFloat(float v, float lo, float hi);
+
 	void DrawThickLine(
 		SDL_Renderer* renderer,
 		const SDL_FPoint& a,

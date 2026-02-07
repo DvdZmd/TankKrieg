@@ -4,8 +4,13 @@
 #include "Math/Vector2.h"
 #include <cmath>
 
-namespace RenderHelper
+namespace Helper
 {
+    float ClampFloat(float v, float lo, float hi)
+    {
+        return (v < lo) ? lo : (v > hi) ? hi : v;
+    }
+
     void DrawThickLine(
         SDL_Renderer* renderer,
         const SDL_FPoint& a,
