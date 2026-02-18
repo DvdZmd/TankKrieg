@@ -1,12 +1,13 @@
 #include "Krieg.h"
 #include "Math/IsoUtils.h"
 #include "Render/IsoDebugDraw.h"
+#include "Render/RenderContext.h"
 #include <iostream>
 
 Krieg::Krieg() {}
 
 Krieg::~Krieg() {
-    // RAII defensivo: si te olvidás llamar Shutdown en main, igual limpia.
+    // Defensive RAII cleanup if Shutdown is skipped in main.
     Shutdown();
 }
 
@@ -29,7 +30,7 @@ bool Krieg::Initialize() {
     }
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    input.Initialize(); // <- ahora sí, SDL ya está inicializado
+    input.Initialize(); // SDL is initialized at this point.
 
     playerTank.SetGridPosition(4.0f, 4.0f);
     playerTank.SetMoveSpeed(2.5f);
@@ -86,7 +87,9 @@ void Krieg::Update(float deltaTime) {
     const Vector2 move = input.GetMovementVector(); // left stick
     const Vector2 aim = input.GetAimVector();      // right stick
 
-    playerTank.Update(deltaTime, move, aim, tileWidth, tileHeight);
+    playerTank.SetMoveVisual(move);
+    playerTank.SetAimVisual(aim);
+    playerTank.Update(deltaTime);
 }
 
 void Krieg::Render() {
@@ -121,7 +124,13 @@ void Krieg::Render() {
         }
     }
 
-    playerTank.Render(renderer, tileW, tileH, originX, originY);
+    RenderContext ctx{};
+    ctx.renderer = renderer;
+    ctx.tileW = tileW;
+    ctx.tileH = tileH;
+    ctx.originX = originX;
+    ctx.originY = originY;
+    playerTank.Render(ctx);
 
     // Highlight selected tile (cursor)
     SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
@@ -129,7 +138,7 @@ void Krieg::Render() {
     // relleno rojo semitransparente
     IsoDebugDraw::FillIsoDiamond(renderer, c.x, c.y, tileW, tileH);
 
-    // borde rojo más fuerte arriba (opcional)
+    // stronger red outline on top (optional)
     SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
     IsoDebugDraw::DrawIsoDiamondOutline(renderer, c.x, c.y, tileW, tileH);
 
@@ -160,3 +169,4 @@ void Krieg::Shutdown() {
 
     isRunning = false;
 }
+

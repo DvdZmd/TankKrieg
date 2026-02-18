@@ -60,11 +60,11 @@ float Tank::AngleFromVectorVisual(const Vector2& v)
 
 void Tank::SetGridPosition(float gx, float gy)
 {
-	gridX = gx;
-	gridY = gy;
+	position.x = gx;
+	position.y = gy;
 }
 
-void Tank::Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual, int tileW, int tileH)
+void Tank::Update(float dt)
 {
 	// --- Hull movement: SNAP to 8 directions (visual), then map to grid
 	const Int2 moveSnap = SnapVisual8(moveVisual);
@@ -80,8 +80,8 @@ void Tank::Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual,
 		// Normalize grid step so diagonals don't move faster
 		const Vector2 gridDir = NormalizeStep(gridStep);
 
-		gridX += gridDir.x * moveSpeedTilesPerSec * dt;
-		gridY += gridDir.y * moveSpeedTilesPerSec * dt;
+		position.x += gridDir.x * speed * dt;
+		position.y += gridDir.y * speed * dt;
 	}
 
 	// --- Turret aiming: ANALOG (N directions). No snapping here.
@@ -92,9 +92,14 @@ void Tank::Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual,
 	}
 }
 
-void Tank::Render(SDL_Renderer* renderer, int tileW, int tileH, int originX, int originY) const
+void Tank::Render(const RenderContext& ctx) const
 {
-	const SDL_FPoint p = IsoUtils::GridToScreenF(gridX, gridY, tileW, tileH, originX, originY);
+	SDL_Renderer* renderer = ctx.renderer;
+	const int tileW = ctx.tileW;
+	const int tileH = ctx.tileH;
+	const int originX = ctx.originX;
+	const int originY = ctx.originY;
+	const SDL_FPoint p = IsoUtils::GridToScreenF(position.x, position.y, tileW, tileH, originX, originY);
 
 	// Shadow on ground (iso diamond)
 	{

@@ -1,29 +1,31 @@
 #pragma once
-#include <SDL3/SDL.h>
-#include "Math/Vector2.h"
+#include "Entities/Unit.h"
 
-class Tank
+class Tank : public Unit
 {
 public:
+    Tank() { speed = 2.5f; }
+
     void SetGridPosition(float gx, float gy);
-    Vector2 GetGridPosition() const { return { gridX, gridY }; }
+    Vector2 GetGridPosition() const { return position; }
 
     // moveVisual: left stick (visual/screen space, normalized-ish)
     // aimVisual : right stick (visual/screen space, normalized-ish)
-    void Update(float dt, const Vector2& moveVisual, const Vector2& aimVisual, int tileW, int tileH);
+    void Update(float dt) override;
 
-    void Render(SDL_Renderer* renderer, int tileW, int tileH, int originX, int originY) const;
+    void Render(const RenderContext& ctx) const override;
 
-    void SetMoveSpeed(float tilesPerSecond) { moveSpeedTilesPerSec = tilesPerSecond; }
+    void SetMoveVisual(const Vector2& value) { moveVisual = value; }
+    void SetAimVisual(const Vector2& value) { aimVisual = value; }
+
+    void SetMoveSpeed(float tilesPerSecond) { speed = tilesPerSecond; }
 
 private:
-    float gridX = 0.0f;
-    float gridY = 0.0f;
+    Vector2 moveVisual;
+    Vector2 aimVisual;
 
     float hullAngleRad = 0.0f;   // in visual/screen space
     float turretAngleRad = 0.0f; // in visual/screen space
-
-    float moveSpeedTilesPerSec = 2.5f;
 
 private:
     static float AngleFromVectorVisual(const Vector2& v);
