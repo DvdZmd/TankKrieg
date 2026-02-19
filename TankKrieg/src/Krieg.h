@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include "World/World.h"
 #include "Input/InputManager.h"
 #include "Entities/Tank.h"
 
@@ -19,7 +20,9 @@ private:
 
 private:
 
-	Tank playerTank;
+	Tank* playerTank = nullptr;
+
+	World world;
 
 	bool isRunning = false;
 	SDL_Window* window = nullptr;

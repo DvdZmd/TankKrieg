@@ -26,6 +26,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Render\Helper.cpp" />
     <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
+    <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Entities\Entity.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Render\Helper.h" />
     <ClInclude Include="src\Render\IsoDebugDraw.h" />
+    <ClInclude Include="src\World\World.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
@@ -138,6 +140,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>C:\Users\davyd\source\repos\TankKrieg\TankKrieg\external\SDL3-3.4.0\lib\x64\SDL3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D "$(SolutionDir)TankKrieg\external\SDL3-3.4.0\lib\x64\SDL3.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -170,6 +175,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>C:\Users\davyd\source\repos\TankKrieg\TankKrieg\external\SDL3-3.4.0\lib\x64\SDL3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D "$(SolutionDir)TankKrieg\external\SDL3-3.4.0\lib\x64\SDL3.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

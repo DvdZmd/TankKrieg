@@ -1,8 +1,9 @@
+#include <iostream>
+#include <memory>
 #include "Krieg.h"
 #include "Math/IsoUtils.h"
 #include "Render/IsoDebugDraw.h"
 #include "Render/RenderContext.h"
-#include <iostream>
 
 Krieg::Krieg() {}
 
@@ -32,8 +33,11 @@ bool Krieg::Initialize() {
 
     input.Initialize(); // SDL is initialized at this point.
 
-    playerTank.SetGridPosition(4.0f, 4.0f);
-    playerTank.SetMoveSpeed(2.5f);
+	//Initialice the player tank and add it to the world
+    // Add any initial config you currently do (speed, etc.)
+    auto tank = std::make_unique<Tank>();
+	tank->position = { 4.0f, 4.0f }; // Start in the middle of the grid
+	playerTank = static_cast<Tank*>(world.Add(std::move(tank)));
 
     isRunning = true;
     return true;
@@ -76,6 +80,7 @@ void Krieg::Update(float deltaTime) {
     Int2 step = input.GetCursorStep();
     cursorX += step.x;
     cursorY += step.y;
+
     // Clamp cursor inside grid bounds
     if (cursorX < 0) cursorX = 0;
     if (cursorY < 0) cursorY = 0;
@@ -83,13 +88,17 @@ void Krieg::Update(float deltaTime) {
 	if (cursorY >= gridH) cursorY = gridH - 1;
 
 
-    // Tank Player 
-    const Vector2 move = input.GetMovementVector(); // left stick
-    const Vector2 aim = input.GetAimVector();      // right stick
+    // 1) Read input and feed the player tank "intent"
+    const Vector2 moveVisual = input.GetMovementVector(); // left stick
+    const Vector2 aimVisual = input.GetAimVector();      // right stick
+    if (playerTank)
+    {
+        playerTank->SetMoveVisual(moveVisual);
+        playerTank->SetAimVisual(aimVisual);
+    }
 
-    playerTank.SetMoveVisual(move);
-    playerTank.SetAimVisual(aim);
-    playerTank.Update(deltaTime);
+    // 2) Update all entities
+    world.Update(deltaTime);
 }
 
 void Krieg::Render() {
@@ -103,7 +112,7 @@ void Krieg::Render() {
     const int originX = 400;
     const int originY = 100;
 
-    // Draw base grid (filled tiles + dark edges)
+	// Draw base grid (filled tiles + dark edges) //TODO move to a function or class if we add more features here (like tile types, highlights, etc.)
     {
         // First pass: fill all tiles in white
         const SDL_FColor tileFill{ 1.0f, 1.0f, 1.0f, 1.0f }; // solid white
@@ -130,7 +139,8 @@ void Krieg::Render() {
     ctx.tileH = tileH;
     ctx.originX = originX;
     ctx.originY = originY;
-    playerTank.Render(ctx);
+
+    world.Render(ctx);
 
     // Highlight selected tile (cursor)
     SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);

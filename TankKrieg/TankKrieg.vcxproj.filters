@@ -22,6 +22,9 @@
     <ClCompile Include="src\Render\Helper.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\World\World.cpp">
+      <Filter>src\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -38,6 +41,9 @@
     </Filter>
     <Filter Include="src\Render">
       <UniqueIdentifier>{a3209fd3-f367-435d-82ac-7623b25edd49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\World">
+      <UniqueIdentifier>{d53f5966-a96a-4f05-b166-1afe988fb92c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="src\Render\Helper.h">
       <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\World.h">
+      <Filter>src\World</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
