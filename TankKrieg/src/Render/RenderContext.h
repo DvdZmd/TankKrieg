@@ -5,8 +5,8 @@
 struct RenderContext
 {
     SDL_Renderer* renderer = nullptr;
-    int tileW = 0;
-    int tileH = 0;
-    int originX = 0;
-    int originY = 0;
+    int tileWidthPx = 0;
+    int tileHeightPx = 0;
+    int originXPx = 0;
+    int originYPx = 0;
 };

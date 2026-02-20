@@ -1,8 +1,13 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include "Math/Int2.h"
+#include "Math/Vector2.h"
 #include "World/World.h"
+#include "World/TileMap.h"
 #include "Input/InputManager.h"
 #include "Entities/Tank.h"
+#include "Render/TileMapRenderer.h"
+#include "Render/DebugOverlay.h"
 
 class Krieg {
 public:
@@ -30,21 +35,16 @@ private:
 
 	InputManager input;
 
-	//tiles size
-	int tileWidth = 64;
-	int tileHeight = 64 / 2;
+	int tileWidthPx = 64;
+	int tileHeightPx = 64 / 2;
 
-	//Windows resolution
-	int kriegWidth = 800;	
-	int kriegHeight = 600;
+	int windowWidthPx = 800;
+	int windowHeightPx = 600;
 
-	// Sandbox: isometric grid cursor (tile highlight) TODO: If this growsup should be a class
-	int cursorX = 0;
-	int cursorY = 0;
-	static constexpr int gridW = 10;
-	static constexpr int gridH = 10;
+	TileMap tileMap{ 10, 10 };
+	TileMapRenderer tileMapRenderer;
+	DebugOverlay debugOverlay;
 
-	// DEBUG
-	float debugGX = 0.0f;
-	float debugGY = 0.0f;
+	Int2 cursorGridTile{ 0, 0 };
+	Vector2 debugCrosshairGridTiles{ 0.0f, 0.0f };
 };

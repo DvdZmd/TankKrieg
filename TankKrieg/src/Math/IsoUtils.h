@@ -24,22 +24,22 @@ namespace IsoUtils
         return { 0, 0 };
     }
 
-    inline SDL_FPoint GridToScreenF(float gx, float gy, int tileW, int tileH, int originX, int originY)
+    inline SDL_FPoint GridToScreenF(float gx, float gy, int tileWidthPx, int tileHeightPx, int originXPx, int originYPx)
     {
-        const float sx = originX + (gx - gy) * (tileW * 0.5f);
-        const float sy = originY + (gx + gy) * (tileH * 0.5f);
+        const float sx = originXPx + (gx - gy) * (tileWidthPx * 0.5f);
+        const float sy = originYPx + (gx + gy) * (tileHeightPx * 0.5f);
         return { sx, sy };
     }
 
-    inline SDL_FPoint GridToScreen(int gx, int gy, int tileW, int tileH, int originX, int originY)
+    inline SDL_FPoint GridToScreen(int gx, int gy, int tileWidthPx, int tileHeightPx, int originXPx, int originYPx)
     {
-        return GridToScreenF((float)gx, (float)gy, tileW, tileH, originX, originY);
+        return GridToScreenF((float)gx, (float)gy, tileWidthPx, tileHeightPx, originXPx, originYPx);
     }
 
     // Converts a continuous direction in VISUAL space (screen-like: +x right, +y down)
     // into a continuous direction in ISO GRID space (gx, gy).
     // The output is normalized (unless input is near zero).
-    inline Vector2 VisualDirToGridDir(const Vector2& visualDir, int tileW, int tileH)
+    inline Vector2 VisualDirToGridDir(const Vector2& visualDir, int tileWidthPx, int tileHeightPx)
     {
         // Safety
         const float lenSq = visualDir.x * visualDir.x + visualDir.y * visualDir.y;
@@ -53,8 +53,8 @@ namespace IsoUtils
         // gx = 0.5 * ( sy/(tileH/2) + sx/(tileW/2) )
         // gy = 0.5 * ( sy/(tileH/2) - sx/(tileW/2) )
 
-        const float a = tileW * 0.5f;
-        const float b = tileH * 0.5f;
+        const float a = tileWidthPx * 0.5f;
+        const float b = tileHeightPx * 0.5f;
 
         // Treat visualDir as (sx, sy) direction
         const float gx = 0.5f * ((visualDir.y / b) + (visualDir.x / a));

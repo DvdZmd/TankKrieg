@@ -24,11 +24,14 @@
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\Krieg.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Render\DebugOverlay.cpp" />
     <ClCompile Include="src\Render\Helper.cpp" />
     <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
+    <ClCompile Include="src\Render\TileMapRenderer.cpp" />
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Render\DebugOverlay.h" />
     <ClInclude Include="src\Entities\Entity.h" />
     <ClInclude Include="src\Entities\Tank.h" />
     <ClInclude Include="src\Entities\Unit.h" />
@@ -37,8 +40,11 @@
     <ClInclude Include="src\Math\Int2.h" />
     <ClInclude Include="src\Math\IsoUtils.h" />
     <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Render\RenderContext.h" />
     <ClInclude Include="src\Render\Helper.h" />
     <ClInclude Include="src\Render\IsoDebugDraw.h" />
+    <ClInclude Include="src\Render\TileMapRenderer.h" />
+    <ClInclude Include="src\World\TileMap.h" />
     <ClInclude Include="src\World\World.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

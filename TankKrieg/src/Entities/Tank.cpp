@@ -58,10 +58,10 @@ float Tank::AngleFromVectorVisual(const Vector2& v)
 	return std::atan2(v.y, v.x);
 }
 
-void Tank::SetGridPosition(float gx, float gy)
+void Tank::SetGridPosition(float gxTiles, float gyTiles)
 {
-	position.x = gx;
-	position.y = gy;
+	position.x = gxTiles;
+	position.y = gyTiles;
 }
 
 void Tank::Update(float dt)
@@ -80,8 +80,8 @@ void Tank::Update(float dt)
 		// Normalize grid step so diagonals don't move faster
 		const Vector2 gridDir = NormalizeStep(gridStep);
 
-		position.x += gridDir.x * speed * dt;
-		position.y += gridDir.y * speed * dt;
+		position.x += gridDir.x * speedTilesPerSec * dt;
+		position.y += gridDir.y * speedTilesPerSec * dt;
 	}
 
 	// --- Turret aiming: ANALOG (N directions). No snapping here.
@@ -95,21 +95,21 @@ void Tank::Update(float dt)
 void Tank::Render(const RenderContext& ctx) const
 {
 	SDL_Renderer* renderer = ctx.renderer;
-	const int tileW = ctx.tileW;
-	const int tileH = ctx.tileH;
-	const int originX = ctx.originX;
-	const int originY = ctx.originY;
-	const SDL_FPoint p = IsoUtils::GridToScreenF(position.x, position.y, tileW, tileH, originX, originY);
+	const int tileWidthPx = ctx.tileWidthPx;
+	const int tileHeightPx = ctx.tileHeightPx;
+	const int originXPx = ctx.originXPx;
+	const int originYPx = ctx.originYPx;
+	const SDL_FPoint centerPx = IsoUtils::GridToScreenF(position.x, position.y, tileWidthPx, tileHeightPx, originXPx, originYPx);
 
 	// Shadow on ground (iso diamond)
 	{
-		const float shadowYOffset = tileH * 0.12f; // tweak visually
+		const float shadowYOffsetPx = tileHeightPx * 0.12f; // tweak visually
 		const float shadowScale = 0.65f;
 
 		// RGBA in 0..1 floats
 		const SDL_FColor shadowColor{ 0.0f, 0.0f, 0.0f, 0.35f };
 
-		IsoDebugDraw::FillIsoDiamond(renderer, p.x, p.y + shadowYOffset, tileW, tileH, shadowColor, shadowScale);
+		IsoDebugDraw::FillIsoDiamond(renderer, centerPx.x, centerPx.y + shadowYOffsetPx, tileWidthPx, tileHeightPx, shadowColor, shadowScale);
 	}
 
 	// --------------------
@@ -122,9 +122,9 @@ void Tank::Render(const RenderContext& ctx) const
 	const float hullBack = 12.0f;
 	const float hullHalfWidth = 10.0f;
 
-	SDL_FPoint ha{ p.x + hf.x * hullForward,                 p.y + hf.y * hullForward };
-	SDL_FPoint hb{ p.x - hf.x * hullBack + hr.x * hullHalfWidth, p.y - hf.y * hullBack + hr.y * hullHalfWidth };
-	SDL_FPoint hc{ p.x - hf.x * hullBack - hr.x * hullHalfWidth, p.y - hf.y * hullBack - hr.y * hullHalfWidth };
+	SDL_FPoint ha{ centerPx.x + hf.x * hullForward,                 centerPx.y + hf.y * hullForward };
+	SDL_FPoint hb{ centerPx.x - hf.x * hullBack + hr.x * hullHalfWidth, centerPx.y - hf.y * hullBack + hr.y * hullHalfWidth };
+	SDL_FPoint hc{ centerPx.x - hf.x * hullBack - hr.x * hullHalfWidth, centerPx.y - hf.y * hullBack - hr.y * hullHalfWidth };
 
 	SDL_SetRenderDrawColor(renderer, 80, 200, 120, 255);
 	//DrawTriangleOutline(renderer, ha, hb, hc);
@@ -140,9 +140,9 @@ void Tank::Render(const RenderContext& ctx) const
 	const float turretBack = 7.0f;
 	const float turretHalfWidth = 6.0f;
 
-	SDL_FPoint ta{ p.x + tf.x * turretForward,                  p.y + tf.y * turretForward };
-	SDL_FPoint tb{ p.x - tf.x * turretBack + tr.x * turretHalfWidth, p.y - tf.y * turretBack + tr.y * turretHalfWidth };
-	SDL_FPoint tc{ p.x - tf.x * turretBack - tr.x * turretHalfWidth, p.y - tf.y * turretBack - tr.y * turretHalfWidth };
+	SDL_FPoint ta{ centerPx.x + tf.x * turretForward,                  centerPx.y + tf.y * turretForward };
+	SDL_FPoint tb{ centerPx.x - tf.x * turretBack + tr.x * turretHalfWidth, centerPx.y - tf.y * turretBack + tr.y * turretHalfWidth };
+	SDL_FPoint tc{ centerPx.x - tf.x * turretBack - tr.x * turretHalfWidth, centerPx.y - tf.y * turretBack - tr.y * turretHalfWidth };
 
 	SDL_SetRenderDrawColor(renderer, 40, 140, 220, 255);
 	//DrawTriangleOutline(renderer, ta, tb, tc);
@@ -150,11 +150,11 @@ void Tank::Render(const RenderContext& ctx) const
 
 	// Barrel
 	const float barrelLen = 26.0f;
-	SDL_FPoint muzzle{ p.x + tf.x * barrelLen, p.y + tf.y * barrelLen };
-	//SDL_RenderLine(renderer, p.x, p.y, muzzle.x, muzzle.y);
-	RenderHelper::DrawThickLine(renderer, p, muzzle, 3.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
+	SDL_FPoint muzzle{ centerPx.x + tf.x * barrelLen, centerPx.y + tf.y * barrelLen };
+	//SDL_RenderLine(renderer, centerPx.x, centerPx.y, muzzle.x, muzzle.y);
+	RenderHelper::DrawThickLine(renderer, centerPx, muzzle, 3.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
 
 
 	// Optional: center dot
-	SDL_RenderPoint(renderer, p.x, p.y);
+	SDL_RenderPoint(renderer, centerPx.x, centerPx.y);
 }

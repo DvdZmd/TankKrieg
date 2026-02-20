@@ -9,7 +9,7 @@ static Int2 QuantizeStickTo8Visual(const Vector2& v, float dz)
 	Int2 s{ 0,0 };
 	s.x = (v.x > dz) ? 1 : (v.x < -dz ? -1 : 0);
 	s.y = (v.y > dz) ? 1 : (v.y < -dz ? -1 : 0);
-	return s; // esto es “visual”: x=izq/der, y=arr/ab en pantalla
+	return s; // visual space: x=left/right, y=up/down on screen
 }
 
 static float ApplyDeadzone(float v, float dz) {
@@ -64,13 +64,13 @@ void InputManager::Update(float dt) {
 	ComposeFinalMove();
 
 
-	// Si ya hubo un cursorStep por teclado/D-pad en este frame, reseteo repeat
+	// If keyboard/D-pad already produced a cursor step this frame, reset repeat.
 	if (cursorStep.x != 0 || cursorStep.y != 0) {
 		cursorRepeatTimer = 0.0f;
 		return;
 	}
 
-	// Si no hubo edge, uso el stick analógico para “stepping” con repeat
+	// If no edge-trigger step happened, use analog stick repeat stepping.
 	if (analogStep.x != 0 || analogStep.y != 0) {
 		cursorRepeatTimer += dt;
 		if (cursorRepeatTimer >= cursorRepeatDelay) {
@@ -155,9 +155,9 @@ void InputManager::ComposeFinalMove() {
 	analogStep = QuantizeStickTo8Visual(gamepadMove, 0.35f);
 
 	// 2) AIM: right stick 
-	aim = gamepadAim; // si está en cero, significa "no apuntar / mantener"
+	aim = gamepadAim; // if zero, keep previous turret direction
 
-	//3) CURSOR STEP: (edge-trigger + “visual directions” mapping) =====
+	// 3) CURSOR STEP: edge-triggered input mapped from visual directions.
 	cursorStep = { 0, 0 };
 
 	// keyboard edges
@@ -184,8 +184,8 @@ void InputManager::ComposeFinalMove() {
 	const bool downNowCombined = downNow || dpadDownNow;
 
 
-	// Queremos permitir diagonales aunque una tecla esté sostenida y la otra recién presionada.
-	// Por eso elegimos "visual" en base al estado actual (now), pero solo cuando hubo un edge.
+	// Allow diagonals when one key is held and the other was just pressed.
+	// Use current "now" state only when an edge occurred.
 	int vx = 0, vy = 0;
 	if (leftNowCombined && !rightNowCombined)  vx = -1;
 	else if (rightNowCombined && !leftNowCombined) vx = 1;
@@ -193,7 +193,7 @@ void InputManager::ComposeFinalMove() {
 	if (upNowCombined && !downNowCombined) vy = -1;
 	else if (downNowCombined && !upNowCombined) vy = 1;
 
-	// mapeo VISUAL -> GRID
+	// VISUAL -> GRID mapping
 	if (vx == 0 && vy == -1)      cursorStep = { -1, -1 }; // up
 	else if (vx == 0 && vy == 1)  cursorStep = { 1,  1 }; // down
 	else if (vx == -1 && vy == 0) cursorStep = { -1,  1 }; // left

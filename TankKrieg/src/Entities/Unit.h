@@ -7,6 +7,6 @@ public:
     void Update(float dt) override;
 
 protected:
-    Vector2 direction;   // hacia dónde quiere ir
-    float speed = 150.0f;
+    Vector2 direction;
+    float speedTilesPerSec = 150.0f;
 };

@@ -28,7 +28,7 @@ private:
     Int2 cursorStep{};
 
     float cursorRepeatTimer = 0.0f;
-    float cursorRepeatDelay = 0.12f; // 120ms entre pasos al sostener stick
+    float cursorRepeatDelay = 0.12f; // 120ms between repeated steps while holding stick
     Int2 analogStep{};
 
     // Discrete cursor (edge-trigger) state

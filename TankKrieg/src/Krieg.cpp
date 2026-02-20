@@ -2,7 +2,6 @@
 #include <memory>
 #include "Krieg.h"
 #include "Math/IsoUtils.h"
-#include "Render/IsoDebugDraw.h"
 #include "Render/RenderContext.h"
 
 Krieg::Krieg() {}
@@ -18,7 +17,7 @@ bool Krieg::Initialize() {
         return false;
     }
 
-    window = SDL_CreateWindow("Tank Krieg", kriegWidth, kriegHeight, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Tank Krieg", windowWidthPx, windowHeightPx, SDL_WINDOW_RESIZABLE);
     if (!window) {
         std::cerr << "Window creation failed: " << SDL_GetError() << std::endl;
         return false;
@@ -33,10 +32,9 @@ bool Krieg::Initialize() {
 
     input.Initialize(); // SDL is initialized at this point.
 
-	//Initialice the player tank and add it to the world
-    // Add any initial config you currently do (speed, etc.)
+    // Initialize the player tank and add it to the world.
     auto tank = std::make_unique<Tank>();
-	tank->position = { 4.0f, 4.0f }; // Start in the middle of the grid
+	tank->position = { 4.0f, 4.0f };
 	playerTank = static_cast<Tank*>(world.Add(std::move(tank)));
 
     isRunning = true;
@@ -60,15 +58,14 @@ void Krieg::Run() {
 void Krieg::ProcessInput(float deltaTime) {
     input.Update(deltaTime);
 
-    // Example: continuous movement test
+    // Continuous movement debug crosshair in grid space (tiles).
     Vector2 moveVisual = input.GetMovementVector(); // left stick, visual space
-    Vector2 moveGrid = IsoUtils::VisualDirToGridDir(moveVisual, tileWidth, tileHeight);
+    Vector2 moveGridTiles = IsoUtils::VisualDirToGridDir(moveVisual, tileWidthPx, tileHeightPx);
 
-    // Optional: force 8-way
-    moveGrid = IsoUtils::SnapGridDir8(moveGrid);
+    moveGridTiles = IsoUtils::SnapGridDir8(moveGridTiles);
 
-    debugGX += moveGrid.x * deltaTime * 2.5f; // tiles per second
-    debugGY += moveGrid.y * deltaTime * 2.5f;
+    debugCrosshairGridTiles.x += moveGridTiles.x * deltaTime * 2.5f;
+    debugCrosshairGridTiles.y += moveGridTiles.y * deltaTime * 2.5f;
 
     if (input.QuitRequested()) {
         isRunning = false;
@@ -76,16 +73,16 @@ void Krieg::ProcessInput(float deltaTime) {
 }
 
 void Krieg::Update(float deltaTime) {
-    // Sandbox: move the grid cursor one tile per key press (or D-pad press).
-    Int2 step = input.GetCursorStep();
-    cursorX += step.x;
-    cursorY += step.y;
+    // Move the cursor one tile per key press or D-pad press.
+    Int2 stepGridTiles = input.GetCursorStep();
+    cursorGridTile.x += stepGridTiles.x;
+    cursorGridTile.y += stepGridTiles.y;
 
-    // Clamp cursor inside grid bounds
-    if (cursorX < 0) cursorX = 0;
-    if (cursorY < 0) cursorY = 0;
-    if (cursorX >= gridW) cursorX = gridW - 1;
-	if (cursorY >= gridH) cursorY = gridH - 1;
+    // Clamp cursor inside grid bounds.
+    if (cursorGridTile.x < 0) cursorGridTile.x = 0;
+    if (cursorGridTile.y < 0) cursorGridTile.y = 0;
+    if (cursorGridTile.x >= tileMap.Width()) cursorGridTile.x = tileMap.Width() - 1;
+	if (cursorGridTile.y >= tileMap.Height()) cursorGridTile.y = tileMap.Height() - 1;
 
 
     // 1) Read input and feed the player tank "intent"
@@ -97,6 +94,9 @@ void Krieg::Update(float deltaTime) {
         playerTank->SetAimVisual(aimVisual);
     }
 
+    debugOverlay.SetCursorTile(cursorGridTile);
+    debugOverlay.SetCrosshairGridTiles(debugCrosshairGridTiles);
+
     // 2) Update all entities
     world.Update(deltaTime);
 }
@@ -105,69 +105,25 @@ void Krieg::Render() {
     SDL_SetRenderDrawColor(renderer, 25, 25, 25, 255);
     SDL_RenderClear(renderer);
 
-    const int tileW = tileWidth;
-    const int tileH = tileHeight;
-
-	//pixel coordinates of the origin (0,0) grid tile
-    const int originX = 400;
-    const int originY = 100;
-
-	// Draw base grid (filled tiles + dark edges) //TODO move to a function or class if we add more features here (like tile types, highlights, etc.)
-    {
-        // First pass: fill all tiles in white
-        const SDL_FColor tileFill{ 1.0f, 1.0f, 1.0f, 1.0f }; // solid white
-        for (int gy = 0; gy < gridH; ++gy) {
-            for (int gx = 0; gx < gridW; ++gx) {
-                SDL_FPoint p = IsoUtils::GridToScreen(gx, gy, tileW, tileH, originX, originY);
-                IsoDebugDraw::FillIsoDiamond(renderer, p.x, p.y, tileW, tileH, tileFill, 1.0f);
-            }
-        }
-
-        // Second pass: draw edges in dark gray on top
-        SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255); // dark gray edges
-        for (int gy = 0; gy < gridH; ++gy) {
-            for (int gx = 0; gx < gridW; ++gx) {
-                SDL_FPoint p = IsoUtils::GridToScreen(gx, gy, tileW, tileH, originX, originY);
-                IsoDebugDraw::DrawIsoDiamondOutline(renderer, p.x, p.y, tileW, tileH);
-            }
-        }
-    }
+    const int originXPx = 400;
+    const int originYPx = 100;
 
     RenderContext ctx{};
     ctx.renderer = renderer;
-    ctx.tileW = tileW;
-    ctx.tileH = tileH;
-    ctx.originX = originX;
-    ctx.originY = originY;
+    ctx.tileWidthPx = tileWidthPx;
+    ctx.tileHeightPx = tileHeightPx;
+    ctx.originXPx = originXPx;
+    ctx.originYPx = originYPx;
 
+    tileMapRenderer.Render(ctx, tileMap);
     world.Render(ctx);
-
-    // Highlight selected tile (cursor)
-    SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
-    SDL_FPoint c = IsoUtils::GridToScreen(cursorX, cursorY, tileW, tileH, originX, originY);
-    // relleno rojo semitransparente
-    IsoDebugDraw::FillIsoDiamond(renderer, c.x, c.y, tileW, tileH);
-
-    // stronger red outline on top (optional)
-    SDL_SetRenderDrawColor(renderer, 255, 80, 80, 255);
-    IsoDebugDraw::DrawIsoDiamondOutline(renderer, c.x, c.y, tileW, tileH);
-
-
-	//This is for testing, creates a cursor in the screen that moves in the isometric grid
-    SDL_FPoint p = IsoUtils::GridToScreenF(debugGX, debugGY, tileW, tileH, originX, originY);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    SDL_RenderLine(renderer, p.x - 5, p.y, p.x + 5, p.y);
-    SDL_RenderLine(renderer, p.x, p.y - 5, p.x, p.y + 5);
-
-
-
-
+    debugOverlay.Render(ctx);
 
     SDL_RenderPresent(renderer);
 }
 
 void Krieg::Shutdown() {
-    // idempotente: que no rompa si se llama 2 veces
+    // Idempotent shutdown: safe to call more than once.
     input.Shutdown();
 
     if (renderer) { SDL_DestroyRenderer(renderer); renderer = nullptr; }
