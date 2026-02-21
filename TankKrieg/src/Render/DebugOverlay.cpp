@@ -13,7 +13,7 @@ void DebugOverlay::Render(const RenderContext& ctx) const
         ctx.originYPx
     );
 
-    SDL_SetRenderDrawColor(ctx.renderer, 255, 80, 80, 255);
+    SDL_SetRenderDrawColor(ctx.renderer, 255, 80, 80, 255);//Intense Red
     IsoDebugDraw::FillIsoDiamond(ctx.renderer, cursorCenterPx.x, cursorCenterPx.y, ctx.tileWidthPx, ctx.tileHeightPx);
     SDL_SetRenderDrawColor(ctx.renderer, 255, 80, 80, 255);
     IsoDebugDraw::DrawIsoDiamondOutline(ctx.renderer, cursorCenterPx.x, cursorCenterPx.y, ctx.tileWidthPx, ctx.tileHeightPx);

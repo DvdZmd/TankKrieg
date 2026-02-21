@@ -105,15 +105,12 @@ void Krieg::Render() {
     SDL_SetRenderDrawColor(renderer, 25, 25, 25, 255);
     SDL_RenderClear(renderer);
 
-    const int originXPx = 400;
-    const int originYPx = 100;
-
     RenderContext ctx{};
     ctx.renderer = renderer;
     ctx.tileWidthPx = tileWidthPx;
     ctx.tileHeightPx = tileHeightPx;
-    ctx.originXPx = originXPx;
-    ctx.originYPx = originYPx;
+    ctx.originXPx = gridOriginXPx;
+    ctx.originYPx = gridOriginYPx;
 
     tileMapRenderer.Render(ctx, tileMap);
     world.Render(ctx);

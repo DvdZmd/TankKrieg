@@ -38,10 +38,13 @@ private:
 	int tileWidthPx = 64;
 	int tileHeightPx = 64 / 2;
 
-	int windowWidthPx = 800;
-	int windowHeightPx = 600;
+	int windowWidthPx = 1280;
+	int windowHeightPx = 920;
 
-	TileMap tileMap{ 10, 10 };
+	int gridOriginXPx = windowWidthPx / 2;
+	int gridOriginYPx = 100;
+
+	TileMap tileMap{ 20, 20 };
 	TileMapRenderer tileMapRenderer;
 	DebugOverlay debugOverlay;
 
