@@ -31,6 +31,8 @@ bool Krieg::Initialize() {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     input.Initialize(); // SDL is initialized at this point.
+    camera.SetViewportSize(windowWidthPx, windowHeightPx);
+    // TODO: update viewport size when handling resize events.
 
     // Initialize the player tank and add it to the world.
     auto tank = std::make_unique<Tank>();
@@ -99,6 +101,12 @@ void Krieg::Update(float deltaTime) {
 
     // 2) Update all entities
     world.Update(deltaTime);
+
+    if (playerTank)
+    {
+        camera.SetTargetGrid(playerTank->position);
+        camera.Update(tileWidthPx, tileHeightPx);
+    }
 }
 
 void Krieg::Render() {
@@ -109,8 +117,8 @@ void Krieg::Render() {
     ctx.renderer = renderer;
     ctx.tileWidthPx = tileWidthPx;
     ctx.tileHeightPx = tileHeightPx;
-    ctx.originXPx = gridOriginXPx;
-    ctx.originYPx = gridOriginYPx;
+    ctx.originXPx = camera.OriginXpx();
+    ctx.originYPx = camera.OriginYpx();
 
     tileMapRenderer.Render(ctx, tileMap);
     world.Render(ctx);

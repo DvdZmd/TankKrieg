@@ -6,6 +6,7 @@
 #include "World/TileMap.h"
 #include "Input/InputManager.h"
 #include "Entities/Tank.h"
+#include "Render/Camera2D.h"
 #include "Render/TileMapRenderer.h"
 #include "Render/DebugOverlay.h"
 
@@ -41,8 +42,7 @@ private:
 	int windowWidthPx = 1280;
 	int windowHeightPx = 920;
 
-	int gridOriginXPx = windowWidthPx / 2;
-	int gridOriginYPx = 100;
+	Camera2D camera;
 
 	TileMap tileMap{ 20, 20 };
 	TileMapRenderer tileMapRenderer;

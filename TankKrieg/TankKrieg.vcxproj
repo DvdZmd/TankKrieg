@@ -24,6 +24,7 @@
     <ClCompile Include="src\Input\InputManager.cpp" />
     <ClCompile Include="src\Krieg.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Render\Camera2D.cpp" />
     <ClCompile Include="src\Render\DebugOverlay.cpp" />
     <ClCompile Include="src\Render\Helper.cpp" />
     <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
@@ -40,6 +41,7 @@
     <ClInclude Include="src\Math\Int2.h" />
     <ClInclude Include="src\Math\IsoUtils.h" />
     <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Render\Camera2D.h" />
     <ClInclude Include="src\Render\RenderContext.h" />
     <ClInclude Include="src\Render\Helper.h" />
     <ClInclude Include="src\Render\IsoDebugDraw.h" />
