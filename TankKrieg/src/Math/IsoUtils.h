@@ -39,6 +39,10 @@ namespace IsoUtils
     // Converts a continuous direction in VISUAL space (screen-like: +x right, +y down)
     // into a continuous direction in ISO GRID space (gx, gy).
     // The output is normalized (unless input is near zero).
+	/// <param name="visualDir">Input direction in visual/screen space, where +x is right and +y is down. Can be any length; output will be normalized to length 1 (unless input is near zero).</param>
+	/// <param name="tileWidthPx">Tile width in pixels, used to account for non-square isometric tiles.</param>
+    /// <param name="tileHeightPx">Tile height in pixels, used to account for non-square isometric tiles.</param>
+    /// <returns>Normalized direction vector in ISO GRID space.</returns>
     inline Vector2 VisualDirToGridDir(const Vector2& visualDir, int tileWidthPx, int tileHeightPx)
     {
         // Safety
