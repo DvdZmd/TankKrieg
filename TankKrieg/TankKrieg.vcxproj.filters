@@ -160,13 +160,34 @@
     <None Include="doc\ARCHITECTURE.md">
       <Filter>doc</Filter>
     </None>
+    <None Include="doc\CAMERA_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
     <None Include="doc\CODING_GUIDELINES.md">
       <Filter>doc</Filter>
     </None>
     <None Include="doc\ENGINE_RULES.md">
       <Filter>doc</Filter>
     </None>
+    <None Include="doc\ENTITY_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\GAMEPLAY_RULES.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\INPUT_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\PHYSICS_COLLISION.md">
+      <Filter>doc</Filter>
+    </None>
     <None Include="doc\RENDER_PIPELINE.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\SPRITE_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\WORLD_SYSTEM.md">
       <Filter>doc</Filter>
     </None>
   </ItemGroup>

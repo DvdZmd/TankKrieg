@@ -65,9 +65,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="doc\ARCHITECTURE.md" />
+    <None Include="doc\CAMERA_SYSTEM.md" />
     <None Include="doc\CODING_GUIDELINES.md" />
     <None Include="doc\ENGINE_RULES.md" />
+    <None Include="doc\ENTITY_SYSTEM.md" />
+    <None Include="doc\GAMEPLAY_RULES.md" />
+    <None Include="doc\INPUT_SYSTEM.md" />
+    <None Include="doc\PHYSICS_COLLISION.md" />
     <None Include="doc\RENDER_PIPELINE.md" />
+    <None Include="doc\SPRITE_SYSTEM.md" />
+    <None Include="doc\WORLD_SYSTEM.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
