@@ -65,6 +65,7 @@ void SpriteEntity::Render(const RenderContext& ctx) const
 
 Vector2 SpriteEntity::GetSpriteWorldAnchor() const
 {
+    // Sprite entities render from the same base point used for world sorting.
     return GetRenderSortPoint();
 }
 

@@ -22,6 +22,10 @@ public:
     virtual void Render(const RenderContext& ctx) const = 0;
 
     virtual EntityCategory GetCategory() const;
+    /**
+     * @brief Return the ground-contact anchor used for isometric sorting and sprite placement.
+     * @return World-space tile position of the entity base point.
+     */
     virtual Vector2 GetRenderSortPoint() const;
     virtual bool BlocksMovement() const;
 

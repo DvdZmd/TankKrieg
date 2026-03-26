@@ -11,6 +11,7 @@ EntityCategory Entity::GetCategory() const
 
 Vector2 Entity::GetRenderSortPoint() const
 {
+    // The default sort point is the entity base on the map grid.
     return worldPosition;
 }
 

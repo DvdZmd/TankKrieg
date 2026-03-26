@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "Assets/TextureManager.h"
 #include "Krieg.h"
 #include "Render/RenderContext.h"
 #include "Scene/IScene.h"
@@ -31,7 +32,8 @@ bool Krieg::Initialize() {
     }
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    activeScene = std::make_unique<PlayScene>(windowWidthPx, windowHeightPx);
+    textureManager = std::make_unique<TextureManager>(renderer);
+    activeScene = std::make_unique<PlayScene>(windowWidthPx, windowHeightPx, *textureManager);
     activeScene->OnEnter();
 
     isRunning = true;
@@ -89,6 +91,11 @@ void Krieg::Shutdown() {
     if (activeScene) {
         activeScene->OnExit();
         activeScene.reset();
+    }
+
+    if (textureManager) {
+        textureManager->Clear();
+        textureManager.reset();
     }
 
     if (renderer) { SDL_DestroyRenderer(renderer); renderer = nullptr; }

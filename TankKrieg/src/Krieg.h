@@ -3,6 +3,7 @@
 
 #include <SDL3/SDL.h>
 
+class TextureManager;
 class IScene;
 
 class Krieg {
@@ -52,5 +53,6 @@ private:
 
 	int windowWidthPx = 1280;
 	int windowHeightPx = 920;
+	std::unique_ptr<TextureManager> textureManager;
 	std::unique_ptr<IScene> activeScene;
 };

@@ -15,6 +15,11 @@ bool StaticEntity::BlocksMovement() const
     return blocksMovement;
 }
 
+Vector2 StaticEntity::GetRenderSortPoint() const
+{
+    return GetWorldPosition();
+}
+
 void StaticEntity::SetCategory(EntityCategory entityCategory)
 {
     category = entityCategory;

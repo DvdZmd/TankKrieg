@@ -9,14 +9,17 @@
 #include "World/TileMap.h"
 #include "Input/InputManager.h"
 #include "Entities/Tank.h"
+#include "Render/TankVisual.h"
 #include "Render/Camera2D.h"
 #include "Render/TileMapRenderer.h"
 #include "Render/DebugOverlay.h"
 
+class TextureManager;
+
 class PlayScene final : public IScene
 {
 public:
-    PlayScene(int viewportWidthPx, int viewportHeightPx);
+    PlayScene(int viewportWidthPx, int viewportHeightPx, TextureManager& textureManager);
 
     void OnEnter() override;
     void OnExit() override;
@@ -27,8 +30,13 @@ public:
     bool WantsToQuit() const override;
 
 private:
+    Int2 WorldPositionToTile(const Vector2& worldPosition) const;
+    bool CanEnterTile(const Int2& tile) const;
+    void ApplyPlayerMovement(float deltaTime);
     void ClampCursorToMapBounds();
     void UpdateCamera();
+    void InitializeTestBlockedTiles();
+    void BuildDefaultTankVisualDefinition();
     void EnsurePlayerTank();
 
 private:
@@ -41,8 +49,10 @@ private:
     Camera2D camera;
     TileMapRenderer tileMapRenderer;
     DebugOverlay debugOverlay;
+    TextureManager& textureManager;
 
     Tank* playerTank = nullptr;
+    TankVisual playerTankVisual{};
     Int2 cursorGridTile{ 0, 0 };
     Vector2 debugCrosshairGridTiles{ 0.0f, 0.0f };
 };

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Assets\TextureManager.cpp" />
     <ClCompile Include="src\Entities\Entity.cpp" />
     <ClCompile Include="src\Entities\SpriteEntity.cpp" />
     <ClCompile Include="src\Entities\StaticEntity.cpp" />
@@ -32,10 +33,13 @@
     <ClCompile Include="src\Render\DebugOverlay.cpp" />
     <ClCompile Include="src\Render\Helper.cpp" />
     <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
+    <ClCompile Include="src\Render\TankDebugRenderer.cpp" />
     <ClCompile Include="src\Render\TileMapRenderer.cpp" />
+    <ClCompile Include="src\World\TileMap.cpp" />
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Assets\TextureManager.h" />
     <ClInclude Include="src\Scene\IScene.h" />
     <ClInclude Include="src\Scene\PlayScene.h" />
     <ClInclude Include="src\Render\DebugOverlay.h" />
@@ -53,9 +57,17 @@
     <ClInclude Include="src\Render\RenderContext.h" />
     <ClInclude Include="src\Render\Helper.h" />
     <ClInclude Include="src\Render\IsoDebugDraw.h" />
+    <ClInclude Include="src\Render\TankDebugRenderer.h" />
+    <ClInclude Include="src\Render\TankVisual.h" />
     <ClInclude Include="src\Render\TileMapRenderer.h" />
     <ClInclude Include="src\World\TileMap.h" />
     <ClInclude Include="src\World\World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="doc\ARCHITECTURE.md" />
+    <None Include="doc\CODING_GUIDELINES.md" />
+    <None Include="doc\ENGINE_RULES.md" />
+    <None Include="doc\RENDER_PIPELINE.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
