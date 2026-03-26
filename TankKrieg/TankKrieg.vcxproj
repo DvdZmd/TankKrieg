@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entities\Entity.cpp" />
+    <ClCompile Include="src\Entities\SpriteEntity.cpp" />
+    <ClCompile Include="src\Entities\StaticEntity.cpp" />
+    <ClCompile Include="src\Scene\PlayScene.cpp" />
     <ClCompile Include="src\Entities\Tank.cpp" />
     <ClCompile Include="src\Entities\Unit.cpp" />
     <ClCompile Include="src\Input\InputManager.cpp" />
@@ -32,8 +36,12 @@
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene\IScene.h" />
+    <ClInclude Include="src\Scene\PlayScene.h" />
     <ClInclude Include="src\Render\DebugOverlay.h" />
     <ClInclude Include="src\Entities\Entity.h" />
+    <ClInclude Include="src\Entities\SpriteEntity.h" />
+    <ClInclude Include="src\Entities\StaticEntity.h" />
     <ClInclude Include="src\Entities\Tank.h" />
     <ClInclude Include="src\Entities\Unit.h" />
     <ClInclude Include="src\Input\InputManager.h" />

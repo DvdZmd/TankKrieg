@@ -1,0 +1,19 @@
+#pragma once
+
+#include "Entities/SpriteEntity.h"
+
+class StaticEntity : public SpriteEntity
+{
+public:
+    explicit StaticEntity(EntityCategory category = EntityCategory::Obstacle);
+
+    EntityCategory GetCategory() const override;
+    bool BlocksMovement() const override;
+
+    void SetCategory(EntityCategory entityCategory);
+    void SetBlocksMovement(bool shouldBlock);
+
+private:
+    EntityCategory category = EntityCategory::Obstacle;
+    bool blocksMovement = false;
+};

@@ -1,212 +1,197 @@
 #include <cmath>
-#include "Entities/Tank.h"
-#include "Math/IsoUtils.h"
-#include "Render/IsoDebugDraw.h"
-#include <Render/Helper.h>
 
-/**
- * @brief Quantize a visual direction to one of eight compass directions.
- * @param v Visual-space direction to snap.
- * @param deadzone Minimum magnitude required before a direction is emitted.
- * @return The snapped visual direction, or { 0, 0 } when the input is too small.
- */
+#include "Entities/Tank.h"
+
+#include "Math/IsoUtils.h"
+#include "Render/Helper.h"
+#include "Render/IsoDebugDraw.h"
+
 static Int2 SnapVisual8(const Vector2& v, float deadzone = 0.25f)
 {
-	const float lenSq = v.x * v.x + v.y * v.y;
-	if (lenSq < deadzone * deadzone) return { 0, 0 };
+    const float lenSq = v.x * v.x + v.y * v.y;
+    if (lenSq < deadzone * deadzone)
+    {
+        return { 0, 0 };
+    }
 
-	Int2 s{ 0,0 };
-	s.x = (v.x > deadzone) ? 1 : (v.x < -deadzone ? -1 : 0);
-	s.y = (v.y > deadzone) ? 1 : (v.y < -deadzone ? -1 : 0);
-	return s;
+    Int2 snapped{ 0, 0 };
+    snapped.x = (v.x > deadzone) ? 1 : (v.x < -deadzone ? -1 : 0);
+    snapped.y = (v.y > deadzone) ? 1 : (v.y < -deadzone ? -1 : 0);
+    return snapped;
 }
 
-/**
- * @brief Convert a discrete integer step into a normalized floating-point direction.
- * @param s Grid or visual step with integer components.
- * @return The normalized direction, or { 0, 0 } when the step is zero.
- */
-static Vector2 NormalizeStep(const Int2& s)
+static Vector2 NormalizeStep(const Int2& step)
 {
-	Vector2 v{ (float)s.x, (float)s.y };
-	const float lsq = v.x * v.x + v.y * v.y;
-	if (lsq < 0.000001f) return { 0.0f, 0.0f };
-	const float inv = 1.0f / SDL_sqrtf(lsq);
-	return { v.x * inv, v.y * inv };
+    Vector2 direction{ static_cast<float>(step.x), static_cast<float>(step.y) };
+    const float lengthSquared = direction.x * direction.x + direction.y * direction.y;
+    if (lengthSquared < 0.000001f)
+    {
+        return { 0.0f, 0.0f };
+    }
+
+    const float inverseLength = 1.0f / SDL_sqrtf(lengthSquared);
+    return { direction.x * inverseLength, direction.y * inverseLength };
 }
 
-
-/**
- * @brief Compute the squared length of a vector.
- * @param v Vector to measure.
- * @return The squared magnitude of the supplied vector.
- */
 static float LengthSq(const Vector2& v)
 {
-	return v.x * v.x + v.y * v.y;
+    return v.x * v.x + v.y * v.y;
 }
 
-/**
- * @brief Normalize a vector while preserving zero-length safety.
- * @param v Vector to normalize.
- * @return The normalized vector, or { 0, 0 } when the input is near zero.
- */
 static Vector2 NormalizeSafe(const Vector2& v)
 {
-	const float lsq = LengthSq(v);
-	if (lsq < 0.000001f) return { 0.0f, 0.0f };
-	const float inv = 1.0f / SDL_sqrtf(lsq);
-	return { v.x * inv, v.y * inv };
+    const float lengthSquared = LengthSq(v);
+    if (lengthSquared < 0.000001f)
+    {
+        return { 0.0f, 0.0f };
+    }
+
+    const float inverseLength = 1.0f / SDL_sqrtf(lengthSquared);
+    return { v.x * inverseLength, v.y * inverseLength };
 }
 
-/**
- * @brief Rotate a vector around the origin by the supplied angle.
- * @param v Vector to rotate.
- * @param a Rotation angle in radians.
- * @return The rotated vector.
- */
-static Vector2 Rotate(const Vector2& v, float a)
+static Vector2 Rotate(const Vector2& v, float radians)
 {
-	const float c = std::cos(a);
-	const float s = std::sin(a);
-	return { v.x * c - v.y * s, v.x * s + v.y * c };
+    const float cosAngle = std::cos(radians);
+    const float sinAngle = std::sin(radians);
+    return { v.x * cosAngle - v.y * sinAngle, v.x * sinAngle + v.y * cosAngle };
 }
 
-/**
- * @brief Draw a thin triangle outline using SDL line primitives.
- * @param r Renderer that receives the draw calls.
- * @param a First triangle vertex.
- * @param b Second triangle vertex.
- * @param c Third triangle vertex.
- */
-static void DrawTriangleOutline(SDL_Renderer* r, const SDL_FPoint& a, const SDL_FPoint& b, const SDL_FPoint& c)
+Tank::Tank()
 {
-	SDL_RenderLine(r, a.x, a.y, b.x, b.y);
-	SDL_RenderLine(r, b.x, b.y, c.x, c.y);
-	SDL_RenderLine(r, c.x, c.y, a.x, a.y);
+    SetMoveSpeed(2.5f);
 }
 
-/**
- * @brief Convert a visual direction vector into an angle in radians.
- * @param v Direction in visual or screen space.
- * @return The angle in radians matching the supplied direction.
- */
 float Tank::AngleFromVectorVisual(const Vector2& v)
 {
-	// Visual/screen space: +x right, +y down -> atan2(y, x) matches SDL coordinates
-	return std::atan2(v.y, v.x);
+    return std::atan2(v.y, v.x);
 }
 
-/**
- * @brief Set the tank position directly in grid-space tile coordinates.
- * @param gxTiles Grid X position measured in tiles.
- * @param gyTiles Grid Y position measured in tiles.
- */
+Vector2 Tank::GetGridPosition() const
+{
+    return GetWorldPosition();
+}
+
 void Tank::SetGridPosition(float gxTiles, float gyTiles)
 {
-	position.x = gxTiles;
-	position.y = gyTiles;
+    SetWorldPosition(gxTiles, gyTiles);
 }
 
-/**
- * @brief Update hull motion from movement input and turret rotation from aim input.
- * @param dt Elapsed time in seconds since the previous update.
- */
+Vector2 Tank::GetRenderSortPoint() const
+{
+    return GetWorldPosition();
+}
+
 void Tank::Update(float dt)
 {
-	// --- Hull movement: SNAP to 8 directions (visual), then map to grid
-	const Int2 moveSnap = SnapVisual8(moveVisual);
+    const Int2 moveSnap = SnapVisual8(moveVisual);
+    if (moveSnap.x != 0 || moveSnap.y != 0)
+    {
+        const Vector2 visualDirection = NormalizeStep(moveSnap);
+        hullAngleRad = AngleFromVectorVisual(visualDirection);
 
-	if (moveSnap.x != 0 || moveSnap.y != 0) {
-		// Use snapped visual direction for hull angle (8-dir)
-		const Vector2 mvSnapNorm = NormalizeStep(moveSnap);
-		hullAngleRad = AngleFromVectorVisual(mvSnapNorm);
+        const Int2 gridStep = IsoUtils::VisualToIsoGridStep(moveSnap);
+        const Vector2 gridDirection = NormalizeStep(gridStep);
+        Translate(gridDirection * GetMoveSpeed() * dt);
+    }
 
-		// Convert snapped visual direction to grid step (8-dir grid step)
-		const Int2 gridStep = IsoUtils::VisualToIsoGridStep(moveSnap);
-
-		// Normalize grid step so diagonals don't move faster
-		const Vector2 gridDir = NormalizeStep(gridStep);
-
-		position.x += gridDir.x * speedTilesPerSec * dt;
-		position.y += gridDir.y * speedTilesPerSec * dt;
-	}
-
-	// --- Turret aiming: ANALOG (N directions). No snapping here.
-	const float aimLenSq = aimVisual.x * aimVisual.x + aimVisual.y * aimVisual.y;
-	if (aimLenSq > 0.0004f) {
-		const Vector2 av = NormalizeSafe(aimVisual);
-		turretAngleRad = AngleFromVectorVisual(av);
-	}
+    const float aimLengthSquared = aimVisual.x * aimVisual.x + aimVisual.y * aimVisual.y;
+    if (aimLengthSquared > 0.0004f)
+    {
+        turretAngleRad = AngleFromVectorVisual(NormalizeSafe(aimVisual));
+    }
 }
 
-/**
- * @brief Render the tank at its current isometric position.
- * @param ctx Rendering data shared across the current frame.
- */
 void Tank::Render(const RenderContext& ctx) const
 {
-	SDL_Renderer* renderer = ctx.renderer;
-	const int tileWidthPx = ctx.tileWidthPx;
-	const int tileHeightPx = ctx.tileHeightPx;
-	const int originXPx = ctx.originXPx;
-	const int originYPx = ctx.originYPx;
-	const SDL_FPoint centerPx = IsoUtils::GridToScreenF(position.x, position.y, tileWidthPx, tileHeightPx, originXPx, originYPx);
+    SDL_Renderer* renderer = ctx.renderer;
+    const Vector2 worldPosition = GetWorldPosition();
+    const SDL_FPoint centerPx = IsoUtils::GridToScreenF(
+        worldPosition.x,
+        worldPosition.y,
+        ctx.tileWidthPx,
+        ctx.tileHeightPx,
+        ctx.originXPx,
+        ctx.originYPx);
 
-	// Shadow on ground (iso diamond)
-	{
-		const float shadowYOffsetPx = tileHeightPx * 0.12f; // tweak visually
-		const float shadowScale = 0.65f;
+    const float shadowYOffsetPx = ctx.tileHeightPx * 0.12f;
+    const SDL_FColor shadowColor{ 0.0f, 0.0f, 0.0f, 0.35f };
+    IsoDebugDraw::FillIsoDiamond(
+        renderer,
+        centerPx.x,
+        centerPx.y + shadowYOffsetPx,
+        ctx.tileWidthPx,
+        ctx.tileHeightPx,
+        shadowColor,
+        0.65f);
 
-		// RGBA in 0..1 floats
-		const SDL_FColor shadowColor{ 0.0f, 0.0f, 0.0f, 0.35f };
+    const Vector2 hullForward = Rotate({ 1.0f, 0.0f }, hullAngleRad);
+    const Vector2 hullRight = Rotate({ 0.0f, 1.0f }, hullAngleRad);
 
-		IsoDebugDraw::FillIsoDiamond(renderer, centerPx.x, centerPx.y + shadowYOffsetPx, tileWidthPx, tileHeightPx, shadowColor, shadowScale);
-	}
+    const float hullForwardPx = 18.0f;
+    const float hullBackPx = 12.0f;
+    const float hullHalfWidthPx = 10.0f;
 
-	// --------------------
-	// Hull (triangle outline)
-	// --------------------
-	const Vector2 hf = Rotate({ 1.0f, 0.0f }, hullAngleRad);
-	const Vector2 hr = Rotate({ 0.0f, 1.0f }, hullAngleRad);
+    const SDL_FPoint hullA{
+        centerPx.x + hullForward.x * hullForwardPx,
+        centerPx.y + hullForward.y * hullForwardPx
+    };
+    const SDL_FPoint hullB{
+        centerPx.x - hullForward.x * hullBackPx + hullRight.x * hullHalfWidthPx,
+        centerPx.y - hullForward.y * hullBackPx + hullRight.y * hullHalfWidthPx
+    };
+    const SDL_FPoint hullC{
+        centerPx.x - hullForward.x * hullBackPx - hullRight.x * hullHalfWidthPx,
+        centerPx.y - hullForward.y * hullBackPx - hullRight.y * hullHalfWidthPx
+    };
 
-	const float hullForward = 18.0f;
-	const float hullBack = 12.0f;
-	const float hullHalfWidth = 10.0f;
+    RenderHelper::DrawTriangleThick(
+        renderer,
+        hullA,
+        hullB,
+        hullC,
+        3.0f,
+        SDL_FColor{ 80.0f / 255.0f, 200.0f / 255.0f, 120.0f / 255.0f, 1.0f });
 
-	SDL_FPoint ha{ centerPx.x + hf.x * hullForward,                 centerPx.y + hf.y * hullForward };
-	SDL_FPoint hb{ centerPx.x - hf.x * hullBack + hr.x * hullHalfWidth, centerPx.y - hf.y * hullBack + hr.y * hullHalfWidth };
-	SDL_FPoint hc{ centerPx.x - hf.x * hullBack - hr.x * hullHalfWidth, centerPx.y - hf.y * hullBack - hr.y * hullHalfWidth };
+    const Vector2 turretForward = Rotate({ 1.0f, 0.0f }, turretAngleRad);
+    const Vector2 turretRight = Rotate({ 0.0f, 1.0f }, turretAngleRad);
 
-	SDL_SetRenderDrawColor(renderer, 80, 200, 120, 255);
-	//DrawTriangleOutline(renderer, ha, hb, hc);
-	RenderHelper::DrawTriangleThick(renderer, ha, hb, hc, 3.0f, SDL_FColor{ 80.0f / 255.0f, 200.0f / 255.0f, 120.0f / 255.0f, 1.0f });
+    const float turretForwardPx = 10.0f;
+    const float turretBackPx = 7.0f;
+    const float turretHalfWidthPx = 6.0f;
 
-	// --------------------
-	// Turret (smaller triangle + barrel line)
-	// --------------------
-	const Vector2 tf = Rotate({ 1.0f, 0.0f }, turretAngleRad);
-	const Vector2 tr = Rotate({ 0.0f, 1.0f }, turretAngleRad);
+    const SDL_FPoint turretA{
+        centerPx.x + turretForward.x * turretForwardPx,
+        centerPx.y + turretForward.y * turretForwardPx
+    };
+    const SDL_FPoint turretB{
+        centerPx.x - turretForward.x * turretBackPx + turretRight.x * turretHalfWidthPx,
+        centerPx.y - turretForward.y * turretBackPx + turretRight.y * turretHalfWidthPx
+    };
+    const SDL_FPoint turretC{
+        centerPx.x - turretForward.x * turretBackPx - turretRight.x * turretHalfWidthPx,
+        centerPx.y - turretForward.y * turretBackPx - turretRight.y * turretHalfWidthPx
+    };
 
-	const float turretForward = 10.0f;
-	const float turretBack = 7.0f;
-	const float turretHalfWidth = 6.0f;
+    RenderHelper::DrawTriangleThick(
+        renderer,
+        turretA,
+        turretB,
+        turretC,
+        2.5f,
+        SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
 
-	SDL_FPoint ta{ centerPx.x + tf.x * turretForward,                  centerPx.y + tf.y * turretForward };
-	SDL_FPoint tb{ centerPx.x - tf.x * turretBack + tr.x * turretHalfWidth, centerPx.y - tf.y * turretBack + tr.y * turretHalfWidth };
-	SDL_FPoint tc{ centerPx.x - tf.x * turretBack - tr.x * turretHalfWidth, centerPx.y - tf.y * turretBack - tr.y * turretHalfWidth };
+    const float barrelLengthPx = 26.0f;
+    const SDL_FPoint muzzle{
+        centerPx.x + turretForward.x * barrelLengthPx,
+        centerPx.y + turretForward.y * barrelLengthPx
+    };
+    RenderHelper::DrawThickLine(
+        renderer,
+        centerPx,
+        muzzle,
+        3.5f,
+        SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
 
-	SDL_SetRenderDrawColor(renderer, 40, 140, 220, 255);
-	//DrawTriangleOutline(renderer, ta, tb, tc);
-	RenderHelper::DrawTriangleThick(renderer, ta, tb, tc, 2.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
-
-	// Barrel
-	const float barrelLen = 26.0f;
-	SDL_FPoint muzzle{ centerPx.x + tf.x * barrelLen, centerPx.y + tf.y * barrelLen };
-	//SDL_RenderLine(renderer, centerPx.x, centerPx.y, muzzle.x, muzzle.y);
-	RenderHelper::DrawThickLine(renderer, centerPx, muzzle, 3.5f, SDL_FColor{ 40.0f / 255.0f, 140.0f / 255.0f, 220.0f / 255.0f, 1.0f });
-
-
-	// Optional: center dot
-	SDL_RenderPoint(renderer, centerPx.x, centerPx.y);
+    SDL_RenderPoint(renderer, centerPx.x, centerPx.y);
 }

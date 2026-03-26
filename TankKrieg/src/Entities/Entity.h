@@ -1,25 +1,51 @@
 #pragma once
+
 #include "Math/Vector2.h"
 #include "Render/RenderContext.h"
 
-class Entity {
+enum class EntityCategory
+{
+    Unknown,
+    Unit,
+    Vehicle,
+    Obstacle,
+    Decoration,
+    Projectile
+};
+
+class Entity
+{
 public:
-    /**
-     * @brief Destroy the entity through a polymorphic base pointer.
-     */
     virtual ~Entity() = default;
 
-    /**
-     * @brief Advance the entity simulation by one frame.
-     * @param dt Elapsed time in seconds since the previous update.
-     */
-    virtual void Update(float dt) = 0;
-    /**
-     * @brief Render the entity using the supplied frame context.
-     * @param ctx Rendering data shared across the current frame.
-     */
+    virtual void Update(float dt);
     virtual void Render(const RenderContext& ctx) const = 0;
 
-    // Position in isometric grid space, measured in tiles.
-    Vector2 position;
+    virtual EntityCategory GetCategory() const;
+    virtual Vector2 GetRenderSortPoint() const;
+    virtual bool BlocksMovement() const;
+
+    Vector2 GetWorldPosition() const;
+    void SetWorldPosition(const Vector2& worldPosition);
+    void SetWorldPosition(float x, float y);
+    void Translate(const Vector2& delta);
+
+    bool IsActive() const;
+    void SetActive(bool active);
+
+    bool IsVisible() const;
+    void SetVisible(bool visible);
+
+    void Destroy();
+    void MarkForDestroy();
+    bool IsPendingDestroy() const;
+
+protected:
+    Entity() = default;
+
+private:
+    Vector2 worldPosition{};
+    bool active = true;
+    bool visible = true;
+    bool pendingDestroy = false;
 };

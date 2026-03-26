@@ -10,7 +10,12 @@ public:
      */
     void Initialize();
     /**
-     * @brief Poll SDL input, refresh device state, and compose frame input values.
+     * @brief Feed a single SDL event into the input manager.
+     * @param event Event dispatched by the application loop.
+     */
+    void HandleEvent(const SDL_Event& event);
+    /**
+     * @brief Refresh device state and compose frame input values.
      * @param dt Elapsed time in seconds since the previous frame.
      */
     void Update(float dt);
@@ -68,11 +73,6 @@ private:
     bool quit = false;
     SDL_Gamepad* gamepad = nullptr;
 
-    /**
-     * @brief Handle a single SDL event relevant to the input manager.
-     * @param e Event polled from SDL for the current frame.
-     */
-    void ProcessEvent(const SDL_Event& e);
     /**
      * @brief Read keyboard state and update keyboard-driven movement inputs.
      */

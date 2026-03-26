@@ -65,21 +65,13 @@ void InputManager::Shutdown() {
 }
 
 /**
- * @brief Poll SDL input and build the final movement, aim, and cursor state for the frame.
+ * @brief Poll input device state and build the final movement, aim, and cursor state for the frame.
  * @param dt Elapsed time in seconds since the previous frame.
  */
 void InputManager::Update(float dt) {
-	quit = false;
-
 	// 1) move now state to prev state
 	upPrev = upNow; downPrev = downNow; leftPrev = leftNow; rightPrev = rightNow;
 	dpadUpPrev = dpadUpNow; dpadDownPrev = dpadDownNow; dpadLeftPrev = dpadLeftNow; dpadRightPrev = dpadRightNow;
-
-	// 2) process events
-	SDL_Event e;
-	while (SDL_PollEvent(&e)) {
-		ProcessEvent(e);
-	}
 
 	UpdateKeyboardState();
 	UpdateGamepadState();
@@ -108,9 +100,9 @@ void InputManager::Update(float dt) {
 
 /**
  * @brief Process a single SDL event that affects input manager state.
- * @param e Event polled from SDL for the current frame.
+ * @param e Event dispatched by the application loop.
  */
-void InputManager::ProcessEvent(const SDL_Event& e) {
+void InputManager::HandleEvent(const SDL_Event& e) {
 	if (e.type == SDL_EVENT_QUIT) {
 		quit = true;
 	}

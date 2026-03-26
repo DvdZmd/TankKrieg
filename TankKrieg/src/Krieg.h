@@ -1,14 +1,9 @@
 #pragma once
+#include <memory>
+
 #include <SDL3/SDL.h>
-#include "Math/Int2.h"
-#include "Math/Vector2.h"
-#include "World/World.h"
-#include "World/TileMap.h"
-#include "Input/InputManager.h"
-#include "Entities/Tank.h"
-#include "Render/Camera2D.h"
-#include "Render/TileMapRenderer.h"
-#include "Render/DebugOverlay.h"
+
+class IScene;
 
 class Krieg {
 public:
@@ -37,12 +32,11 @@ public:
 
 private:
 	/**
-	 * @brief Poll input sources and update frame-specific input state.
-	 * @param deltaTime Elapsed time in seconds since the previous frame.
+	 * @brief Poll SDL events and forward them to the active scene.
 	 */
-	void ProcessInput(float deltaTime);
+	void ProcessEvents();
 	/**
-	 * @brief Advance gameplay state, debug state, and camera tracking for one frame.
+	 * @brief Advance the active scene by one frame.
 	 * @param deltaTime Elapsed simulation time in seconds for the current frame.
 	 */
 	void Update(float deltaTime);
@@ -52,29 +46,11 @@ private:
 	void Render();
 
 private:
-
-	Tank* playerTank = nullptr;
-
-	World world;
-
 	bool isRunning = false;
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 
-	InputManager input;
-
-	int tileWidthPx = 64;
-	int tileHeightPx = 64 / 2;
-
 	int windowWidthPx = 1280;
 	int windowHeightPx = 920;
-
-	Camera2D camera;
-
-	TileMap tileMap{ 20, 20 };
-	TileMapRenderer tileMapRenderer;
-	DebugOverlay debugOverlay;
-
-	Int2 cursorGridTile{ 0, 0 };
-	Vector2 debugCrosshairGridTiles{ 0.0f, 0.0f };
+	std::unique_ptr<IScene> activeScene;
 };

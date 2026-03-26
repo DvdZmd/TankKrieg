@@ -1,17 +1,26 @@
-#include "Unit.h"
+#include "Entities/Unit.h"
 
-/**
- * @brief Store the movement direction used by the base unit update.
- * @param dir Direction in grid space for future movement updates.
- */
-void Unit::SetDirection(const Vector2& dir) {
-    direction = dir;
+void Unit::SetMovementDirection(const Vector2& direction)
+{
+    movementDirection = direction;
 }
 
-/**
- * @brief Advance the unit position using its current direction and speed.
- * @param dt Elapsed time in seconds since the previous update.
- */
-void Unit::Update(float dt) {
-    position += direction * speedTilesPerSec * dt;
+Vector2 Unit::GetMovementDirection() const
+{
+    return movementDirection;
+}
+
+void Unit::SetMoveSpeed(float speedTilesPerSecond)
+{
+    speedTilesPerSec = speedTilesPerSecond;
+}
+
+float Unit::GetMoveSpeed() const
+{
+    return speedTilesPerSec;
+}
+
+void Unit::Update(float dt)
+{
+    Translate(movementDirection * speedTilesPerSec * dt);
 }
