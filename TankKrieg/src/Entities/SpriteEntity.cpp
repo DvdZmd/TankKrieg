@@ -58,11 +58,6 @@ SDL_FRect SpriteEntity::GetSpriteDestinationRect(const RenderContext& ctx) const
     };
 }
 
-void SpriteEntity::Render(const RenderContext& ctx) const
-{
-    RenderSprite(ctx);
-}
-
 Vector2 SpriteEntity::GetSpriteWorldAnchor() const
 {
     // Sprite entities render from the same base point used for world sorting.

@@ -9,7 +9,9 @@
 #include "World/TileMap.h"
 #include "Input/InputManager.h"
 #include "Entities/Tank.h"
+#include "Entities/Entity.h"
 #include "Render/TankVisual.h"
+#include "Render/TankRenderer.h"
 #include "Render/Camera2D.h"
 #include "Render/TileMapRenderer.h"
 #include "Render/DebugOverlay.h"
@@ -38,6 +40,9 @@ private:
     void InitializeTestBlockedTiles();
     void BuildDefaultTankVisualDefinition();
     void EnsurePlayerTank();
+    void RenderWorld(const RenderContext& renderContext) const;
+    void RenderEntity(const Entity& entity, const RenderContext& renderContext) const;
+    const TankVisual* ResolveTankVisual(const Tank& tank) const;
 
 private:
     static constexpr int kTileWidthPx = 64;
@@ -48,6 +53,7 @@ private:
     InputManager input;
     Camera2D camera;
     TileMapRenderer tileMapRenderer;
+    TankRenderer tankRenderer;
     DebugOverlay debugOverlay;
     TextureManager& textureManager;
 

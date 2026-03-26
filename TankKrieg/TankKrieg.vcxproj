@@ -34,6 +34,7 @@
     <ClCompile Include="src\Render\Helper.cpp" />
     <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
     <ClCompile Include="src\Render\TankDebugRenderer.cpp" />
+    <ClCompile Include="src\Render\TankRenderer.cpp" />
     <ClCompile Include="src\Render\TileMapRenderer.cpp" />
     <ClCompile Include="src\World\TileMap.cpp" />
     <ClCompile Include="src\World\World.cpp" />
@@ -58,6 +59,8 @@
     <ClInclude Include="src\Render\Helper.h" />
     <ClInclude Include="src\Render\IsoDebugDraw.h" />
     <ClInclude Include="src\Render\TankDebugRenderer.h" />
+    <ClInclude Include="src\Render\TankRenderData.h" />
+    <ClInclude Include="src\Render\TankRenderer.h" />
     <ClInclude Include="src\Render\TankVisual.h" />
     <ClInclude Include="src\Render\TileMapRenderer.h" />
     <ClInclude Include="src\World\TileMap.h" />

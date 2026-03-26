@@ -5,6 +5,7 @@
 #include "Scene/PlayScene.h"
 
 #include "Assets/TextureManager.h"
+#include "Entities/Entity.h"
 #include "Math/IsoUtils.h"
 #include "Render/RenderContext.h"
 
@@ -146,7 +147,7 @@ void PlayScene::Render(const RenderContext& renderContext)
     sceneContext.originYPx = camera.OriginYpx();
 
     tileMapRenderer.Render(sceneContext, tileMap);
-    world.Render(sceneContext);
+    RenderWorld(sceneContext);
     debugOverlay.Render(sceneContext);
 }
 
@@ -260,6 +261,35 @@ void PlayScene::EnsurePlayerTank()
 
     auto tank = std::make_unique<Tank>();
     tank->SetGridPosition(4.0f, 4.0f);
-    tank->SetVisual(&playerTankVisual);
     playerTank = static_cast<Tank*>(world.Add(std::move(tank)));
+}
+
+void PlayScene::RenderWorld(const RenderContext& renderContext) const
+{
+    const std::vector<const Entity*> renderList = world.BuildRenderList();
+    for (const Entity* entity : renderList)
+    {
+        if (entity != nullptr && entity->IsVisible())
+        {
+            RenderEntity(*entity, renderContext);
+        }
+    }
+}
+
+void PlayScene::RenderEntity(const Entity& entity, const RenderContext& renderContext) const
+{
+    if (const auto* tank = dynamic_cast<const Tank*>(&entity))
+    {
+        tankRenderer.Render(tank->BuildRenderData(), renderContext, ResolveTankVisual(*tank));
+    }
+}
+
+const TankVisual* PlayScene::ResolveTankVisual(const Tank& tank) const
+{
+    if (&tank == playerTank)
+    {
+        return &playerTankVisual;
+    }
+
+    return nullptr;
 }

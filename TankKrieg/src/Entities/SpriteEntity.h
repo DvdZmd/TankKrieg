@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include "Entities/Entity.h"
+#include "Render/RenderContext.h"
 
 struct SpriteRenderData
 {
@@ -26,8 +27,6 @@ public:
 
     Vector2 GetSpriteAnchorPoint() const;
     SDL_FRect GetSpriteDestinationRect(const RenderContext& ctx) const;
-
-    void Render(const RenderContext& ctx) const override;
 
 protected:
     virtual Vector2 GetSpriteWorldAnchor() const;

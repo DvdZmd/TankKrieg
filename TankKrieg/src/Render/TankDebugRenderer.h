@@ -3,8 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include "Render/RenderContext.h"
-
-class Tank;
+#include "Render/TankRenderData.h"
 
 struct TankDebugStyle
 {
@@ -26,5 +25,5 @@ struct TankDebugStyle
 class TankDebugRenderer
 {
 public:
-    static void Render(const Tank& tank, const RenderContext& ctx, const TankDebugStyle& style = TankDebugStyle{});
+    static void Render(const TankRenderData& tankRenderData, const RenderContext& ctx, const TankDebugStyle& style = TankDebugStyle{});
 };

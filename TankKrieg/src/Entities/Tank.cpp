@@ -3,8 +3,6 @@
 #include "Entities/Tank.h"
 
 #include "Math/IsoUtils.h"
-#include "Render/TankDebugRenderer.h"
-#include "Render/TankVisual.h"
 
 namespace
 {
@@ -78,6 +76,15 @@ Vector2 Tank::GetRenderSortPoint() const
     return GetWorldPosition();
 }
 
+TankRenderData Tank::BuildRenderData() const
+{
+    TankRenderData renderData{};
+    renderData.worldPosition = GetRenderSortPoint();
+    renderData.hullAngleRadians = hullAngleRad;
+    renderData.turretAngleRadians = turretAngleRad;
+    return renderData;
+}
+
 Vector2 Tank::ComputeMoveDelta(float dt) const
 {
     const Int2 moveSnap = SnapVisual8(moveVisual);
@@ -105,16 +112,4 @@ void Tank::Update(float)
     {
         turretAngleRad = AngleFromVectorVisual(NormalizeSafe(aimVisual));
     }
-}
-
-void Tank::Render(const RenderContext& ctx) const
-{
-    if (TankVisual::IsComplete(visual))
-    {
-        TankVisual::RenderLayer(visual->hull, GetRenderSortPoint(), hullAngleRad, ctx);
-        TankVisual::RenderLayer(visual->turret, GetRenderSortPoint(), turretAngleRad, ctx);
-        return;
-    }
-
-    TankDebugRenderer::Render(*this, ctx);
 }
