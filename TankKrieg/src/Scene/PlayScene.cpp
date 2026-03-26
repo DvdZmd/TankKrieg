@@ -5,7 +5,6 @@
 #include "Scene/PlayScene.h"
 
 #include "Assets/TextureManager.h"
-#include "Entities/Entity.h"
 #include "Math/IsoUtils.h"
 #include "Render/RenderContext.h"
 
@@ -16,9 +15,9 @@ namespace
     constexpr const char* kTankHullTexturePath = "assets/textures/tank_hull.bmp";
     constexpr const char* kTankTurretTexturePath = "assets/textures/tank_turret.bmp";
 
-    std::array<SDL_FRect, TankVisual::kDirectionCount> BuildHorizontalFrameSet(SDL_Texture* texture)
+    std::array<SDL_FRect, DirectionalSpriteSet::kDirectionCount> BuildHorizontalFrameSet(SDL_Texture* texture)
     {
-        std::array<SDL_FRect, TankVisual::kDirectionCount> frames{};
+        std::array<SDL_FRect, DirectionalSpriteSet::kDirectionCount> frames{};
         if (texture == nullptr)
         {
             return frames;
@@ -31,12 +30,12 @@ namespace
             return frames;
         }
 
-        const bool hasEightFrames = std::fmod(textureWidth, static_cast<float>(TankVisual::kDirectionCount)) == 0.0f;
+        const bool hasEightFrames = std::fmod(textureWidth, static_cast<float>(DirectionalSpriteSet::kDirectionCount)) == 0.0f;
         const float frameWidth = hasEightFrames
-            ? textureWidth / static_cast<float>(TankVisual::kDirectionCount)
+            ? textureWidth / static_cast<float>(DirectionalSpriteSet::kDirectionCount)
             : textureWidth;
 
-        for (int index = 0; index < TankVisual::kDirectionCount; ++index)
+        for (int index = 0; index < DirectionalSpriteSet::kDirectionCount; ++index)
         {
             const float x = hasEightFrames ? frameWidth * static_cast<float>(index) : 0.0f;
             frames[index] = SDL_FRect{ x, 0.0f, frameWidth, textureHeight };
@@ -61,9 +60,9 @@ namespace
             return layer;
         }
 
-        const bool hasEightFrames = std::fmod(textureWidth, static_cast<float>(TankVisual::kDirectionCount)) == 0.0f;
+        const bool hasEightFrames = std::fmod(textureWidth, static_cast<float>(DirectionalSpriteSet::kDirectionCount)) == 0.0f;
         const float frameWidth = hasEightFrames
-            ? textureWidth / static_cast<float>(TankVisual::kDirectionCount)
+            ? textureWidth / static_cast<float>(DirectionalSpriteSet::kDirectionCount)
             : textureWidth;
 
         layer.sourceRects = BuildHorizontalFrameSet(texture);
@@ -128,7 +127,7 @@ void PlayScene::Update(float deltaTime)
     if (playerTank) {
         playerTank->SetMoveVisual(moveVisual);
         playerTank->SetAimVisual(input.GetAimVector());
-        ApplyPlayerMovement(deltaTime);
+        tankMovementResolver.ApplyMovement(*playerTank, deltaTime, tileMap);
     }
 
     debugOverlay.SetCursorTile(cursorGridTile);
@@ -147,7 +146,7 @@ void PlayScene::Render(const RenderContext& renderContext)
     sceneContext.originYPx = camera.OriginYpx();
 
     tileMapRenderer.Render(sceneContext, tileMap);
-    RenderWorld(sceneContext);
+    worldRenderer.Render(world, sceneContext, playerTank, &playerTankVisual);
     debugOverlay.Render(sceneContext);
 }
 
@@ -162,55 +161,6 @@ void PlayScene::ClampCursorToMapBounds()
     if (cursorGridTile.y < 0) cursorGridTile.y = 0;
     if (cursorGridTile.x >= tileMap.Width()) cursorGridTile.x = tileMap.Width() - 1;
     if (cursorGridTile.y >= tileMap.Height()) cursorGridTile.y = tileMap.Height() - 1;
-}
-
-Int2 PlayScene::WorldPositionToTile(const Vector2& worldPosition) const
-{
-    return Int2{
-        static_cast<int>(std::floor(worldPosition.x + 0.5f)),
-        static_cast<int>(std::floor(worldPosition.y + 0.5f))
-    };
-}
-
-bool PlayScene::CanEnterTile(const Int2& tile) const
-{
-    return !tileMap.BlocksMovement(tile);
-}
-
-void PlayScene::ApplyPlayerMovement(float deltaTime)
-{
-    if (playerTank == nullptr)
-    {
-        return;
-    }
-
-    const Vector2 moveDelta = playerTank->ComputeMoveDelta(deltaTime);
-    if (moveDelta.x == 0.0f && moveDelta.y == 0.0f)
-    {
-        return;
-    }
-
-    const Vector2 currentPosition = playerTank->GetWorldPosition();
-    const Vector2 nextPosition = currentPosition + moveDelta;
-    const Int2 nextTile = WorldPositionToTile(nextPosition);
-
-    if (CanEnterTile(nextTile))
-    {
-        playerTank->SetWorldPosition(nextPosition);
-        return;
-    }
-
-    const Vector2 xOnlyPosition{ currentPosition.x + moveDelta.x, currentPosition.y };
-    if (CanEnterTile(WorldPositionToTile(xOnlyPosition)))
-    {
-        playerTank->SetWorldPosition(xOnlyPosition);
-    }
-
-    const Vector2 yOnlyPosition{ playerTank->GetWorldPosition().x, currentPosition.y + moveDelta.y };
-    if (CanEnterTile(WorldPositionToTile(yOnlyPosition)))
-    {
-        playerTank->SetWorldPosition(yOnlyPosition);
-    }
 }
 
 void PlayScene::UpdateCamera()
@@ -262,34 +212,4 @@ void PlayScene::EnsurePlayerTank()
     auto tank = std::make_unique<Tank>();
     tank->SetGridPosition(4.0f, 4.0f);
     playerTank = static_cast<Tank*>(world.Add(std::move(tank)));
-}
-
-void PlayScene::RenderWorld(const RenderContext& renderContext) const
-{
-    const std::vector<const Entity*> renderList = world.BuildRenderList();
-    for (const Entity* entity : renderList)
-    {
-        if (entity != nullptr && entity->IsVisible())
-        {
-            RenderEntity(*entity, renderContext);
-        }
-    }
-}
-
-void PlayScene::RenderEntity(const Entity& entity, const RenderContext& renderContext) const
-{
-    if (const auto* tank = dynamic_cast<const Tank*>(&entity))
-    {
-        tankRenderer.Render(tank->BuildRenderData(), renderContext, ResolveTankVisual(*tank));
-    }
-}
-
-const TankVisual* PlayScene::ResolveTankVisual(const Tank& tank) const
-{
-    if (&tank == playerTank)
-    {
-        return &playerTankVisual;
-    }
-
-    return nullptr;
 }

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Render/RenderContext.h"
-#include "Render/TankRenderData.h"
+#include "Entities/TankVisualState.h"
 
-struct TankVisual;
+struct TankVisualDefinition;
 
 class TankRenderer
 {
 public:
-    void Render(const TankRenderData& tankRenderData, const RenderContext& ctx, const TankVisual* visual) const;
+    void Render(const TankVisualState& tankVisualState, const RenderContext& ctx, const TankVisualDefinition* visualDefinition) const;
 };

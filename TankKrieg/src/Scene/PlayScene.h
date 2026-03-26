@@ -7,14 +7,14 @@
 #include "Math/Vector2.h"
 #include "World/World.h"
 #include "World/TileMap.h"
+#include "World/TankMovementResolver.h"
 #include "Input/InputManager.h"
 #include "Entities/Tank.h"
-#include "Entities/Entity.h"
-#include "Render/TankVisual.h"
-#include "Render/TankRenderer.h"
 #include "Render/Camera2D.h"
 #include "Render/TileMapRenderer.h"
 #include "Render/DebugOverlay.h"
+#include "Render/TankVisualDefinition.h"
+#include "Render/WorldRenderer.h"
 
 class TextureManager;
 
@@ -32,17 +32,11 @@ public:
     bool WantsToQuit() const override;
 
 private:
-    Int2 WorldPositionToTile(const Vector2& worldPosition) const;
-    bool CanEnterTile(const Int2& tile) const;
-    void ApplyPlayerMovement(float deltaTime);
     void ClampCursorToMapBounds();
     void UpdateCamera();
     void InitializeTestBlockedTiles();
     void BuildDefaultTankVisualDefinition();
     void EnsurePlayerTank();
-    void RenderWorld(const RenderContext& renderContext) const;
-    void RenderEntity(const Entity& entity, const RenderContext& renderContext) const;
-    const TankVisual* ResolveTankVisual(const Tank& tank) const;
 
 private:
     static constexpr int kTileWidthPx = 64;
@@ -53,12 +47,13 @@ private:
     InputManager input;
     Camera2D camera;
     TileMapRenderer tileMapRenderer;
-    TankRenderer tankRenderer;
+    WorldRenderer worldRenderer;
     DebugOverlay debugOverlay;
     TextureManager& textureManager;
+    TankMovementResolver tankMovementResolver;
 
     Tank* playerTank = nullptr;
-    TankVisual playerTankVisual{};
+    TankVisualDefinition playerTankVisual{};
     Int2 cursorGridTile{ 0, 0 };
     Vector2 debugCrosshairGridTiles{ 0.0f, 0.0f };
 };

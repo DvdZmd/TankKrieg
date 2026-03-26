@@ -33,9 +33,12 @@
     <ClCompile Include="src\Render\DebugOverlay.cpp" />
     <ClCompile Include="src\Render\Helper.cpp" />
     <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
+    <ClCompile Include="src\Render\TankDirectionResolver.cpp" />
     <ClCompile Include="src\Render\TankDebugRenderer.cpp" />
     <ClCompile Include="src\Render\TankRenderer.cpp" />
     <ClCompile Include="src\Render\TileMapRenderer.cpp" />
+    <ClCompile Include="src\Render\WorldRenderer.cpp" />
+    <ClCompile Include="src\World\TankMovementResolver.cpp" />
     <ClCompile Include="src\World\TileMap.cpp" />
     <ClCompile Include="src\World\World.cpp" />
   </ItemGroup>
@@ -48,6 +51,7 @@
     <ClInclude Include="src\Entities\SpriteEntity.h" />
     <ClInclude Include="src\Entities\StaticEntity.h" />
     <ClInclude Include="src\Entities\Tank.h" />
+    <ClInclude Include="src\Entities\TankVisualState.h" />
     <ClInclude Include="src\Entities\Unit.h" />
     <ClInclude Include="src\Input\InputManager.h" />
     <ClInclude Include="src\Krieg.h" />
@@ -58,11 +62,13 @@
     <ClInclude Include="src\Render\RenderContext.h" />
     <ClInclude Include="src\Render\Helper.h" />
     <ClInclude Include="src\Render\IsoDebugDraw.h" />
+    <ClInclude Include="src\Render\TankDirectionResolver.h" />
     <ClInclude Include="src\Render\TankDebugRenderer.h" />
-    <ClInclude Include="src\Render\TankRenderData.h" />
     <ClInclude Include="src\Render\TankRenderer.h" />
-    <ClInclude Include="src\Render\TankVisual.h" />
+    <ClInclude Include="src\Render\TankVisualDefinition.h" />
     <ClInclude Include="src\Render\TileMapRenderer.h" />
+    <ClInclude Include="src\Render\WorldRenderer.h" />
+    <ClInclude Include="src\World\TankMovementResolver.h" />
     <ClInclude Include="src\World\TileMap.h" />
     <ClInclude Include="src\World\World.h" />
   </ItemGroup>

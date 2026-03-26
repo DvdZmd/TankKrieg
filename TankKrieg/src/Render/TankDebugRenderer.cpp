@@ -16,10 +16,10 @@ namespace
     }
 }
 
-void TankDebugRenderer::Render(const TankRenderData& tankRenderData, const RenderContext& ctx, const TankDebugStyle& style)
+void TankDebugRenderer::Render(const TankVisualState& tankVisualState, const RenderContext& ctx, const TankDebugStyle& style)
 {
     SDL_Renderer* renderer = ctx.renderer;
-    const Vector2 worldPosition = tankRenderData.worldPosition;
+    const Vector2 worldPosition = tankVisualState.worldPosition;
     const SDL_FPoint centerPx = IsoUtils::GridToScreenF(
         worldPosition.x,
         worldPosition.y,
@@ -38,8 +38,8 @@ void TankDebugRenderer::Render(const TankRenderData& tankRenderData, const Rende
         shadowColor,
         style.shadowScale);
 
-    const Vector2 hullForward = Rotate({ 1.0f, 0.0f }, tankRenderData.hullAngleRadians);
-    const Vector2 hullRight = Rotate({ 0.0f, 1.0f }, tankRenderData.hullAngleRadians);
+    const Vector2 hullForward = Rotate({ 1.0f, 0.0f }, tankVisualState.hullAngleRadians);
+    const Vector2 hullRight = Rotate({ 0.0f, 1.0f }, tankVisualState.hullAngleRadians);
 
     const SDL_FPoint hullA{
         centerPx.x + hullForward.x * style.hullForwardPx,
@@ -62,8 +62,8 @@ void TankDebugRenderer::Render(const TankRenderData& tankRenderData, const Rende
         style.hullThicknessPx,
         SDL_FColor{ 80.0f / 255.0f, 200.0f / 255.0f, 120.0f / 255.0f, 1.0f });
 
-    const Vector2 turretForward = Rotate({ 1.0f, 0.0f }, tankRenderData.turretAngleRadians);
-    const Vector2 turretRight = Rotate({ 0.0f, 1.0f }, tankRenderData.turretAngleRadians);
+    const Vector2 turretForward = Rotate({ 1.0f, 0.0f }, tankVisualState.turretAngleRadians);
+    const Vector2 turretRight = Rotate({ 0.0f, 1.0f }, tankVisualState.turretAngleRadians);
 
     const SDL_FPoint turretA{
         centerPx.x + turretForward.x * style.turretForwardPx,

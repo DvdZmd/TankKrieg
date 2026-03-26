@@ -2,7 +2,7 @@
 
 #include "Math/Vector2.h"
 
-struct TankRenderData
+struct TankVisualState
 {
     Vector2 worldPosition{};
     float hullAngleRadians = 0.0f;

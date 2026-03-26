@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entities/Unit.h"
-#include "Render/TankRenderData.h"
+#include "Entities/TankVisualState.h"
 
 class Tank : public Unit
 {
@@ -16,12 +16,13 @@ public:
     Vector2 GetRenderSortPoint() const override;
     bool BlocksMovement() const override { return true; }
 
-    TankRenderData BuildRenderData() const;
-    Vector2 ComputeMoveDelta(float dt) const;
+    TankVisualState BuildVisualState() const;
     void Update(float dt) override;
 
     void SetMoveVisual(const Vector2& value) { moveVisual = value; }
     void SetAimVisual(const Vector2& value) { aimVisual = value; }
+    Vector2 GetMoveVisual() const { return moveVisual; }
+    Vector2 GetAimVisual() const { return aimVisual; }
 
     float GetHullAngleRadians() const { return hullAngleRad; }
     float GetTurretAngleRadians() const { return turretAngleRad; }
