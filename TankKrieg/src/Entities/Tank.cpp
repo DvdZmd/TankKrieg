@@ -2,54 +2,18 @@
 
 #include "Entities/Tank.h"
 
-#include "Math/IsoUtils.h"
-#include "Render/TankDebugRenderer.h"
-#include "Render/TankVisual.h"
-
 namespace
 {
-    Int2 SnapVisual8(const Vector2& v, float deadzone = 0.25f)
+    Vector2 NormalizeSafe(const Vector2& value)
     {
-        const float lenSq = v.x * v.x + v.y * v.y;
-        if (lenSq < deadzone * deadzone)
-        {
-            return { 0, 0 };
-        }
-
-        Int2 snapped{ 0, 0 };
-        snapped.x = (v.x > deadzone) ? 1 : (v.x < -deadzone ? -1 : 0);
-        snapped.y = (v.y > deadzone) ? 1 : (v.y < -deadzone ? -1 : 0);
-        return snapped;
-    }
-
-    Vector2 NormalizeStep(const Int2& step)
-    {
-        Vector2 direction{ static_cast<float>(step.x), static_cast<float>(step.y) };
-        const float lengthSquared = direction.x * direction.x + direction.y * direction.y;
+        const float lengthSquared = value.x * value.x + value.y * value.y;
         if (lengthSquared < 0.000001f)
         {
             return { 0.0f, 0.0f };
         }
 
-        const float inverseLength = 1.0f / SDL_sqrtf(lengthSquared);
-        return { direction.x * inverseLength, direction.y * inverseLength };
-    }
-
-    float LengthSq(const Vector2& v)
-    {
-        return v.x * v.x + v.y * v.y;
-    }
-
-    Vector2 NormalizeSafe(const Vector2& v)
-    {
-        const float lengthSquared = LengthSq(v);
-        if (lengthSquared < 0.000001f)
-        {
-            return { 0.0f, 0.0f };
-        }
-
-        const float inverseLength = 1.0f / SDL_sqrtf(lengthSquared);
-        return { v.x * inverseLength, v.y * inverseLength };
+        const float inverseLength = 1.0f / std::sqrt(lengthSquared);
+        return { value.x * inverseLength, value.y * inverseLength };
     }
 }
 
@@ -78,43 +42,26 @@ Vector2 Tank::GetRenderSortPoint() const
     return GetWorldPosition();
 }
 
-Vector2 Tank::ComputeMoveDelta(float dt) const
+TankVisualState Tank::BuildVisualState() const
 {
-    const Int2 moveSnap = SnapVisual8(moveVisual);
-    if (moveSnap.x == 0 && moveSnap.y == 0)
-    {
-        return { 0.0f, 0.0f };
-    }
-
-    const Int2 gridStep = IsoUtils::VisualToIsoGridStep(moveSnap);
-    const Vector2 gridDirection = NormalizeStep(gridStep);
-    return gridDirection * GetMoveSpeed() * dt;
+    TankVisualState visualState{};
+    visualState.worldPosition = GetRenderSortPoint();
+    visualState.hullAngleRadians = hullAngleRad;
+    visualState.turretAngleRadians = turretAngleRad;
+    return visualState;
 }
 
 void Tank::Update(float)
 {
-    const Int2 moveSnap = SnapVisual8(moveVisual);
-    if (moveSnap.x != 0 || moveSnap.y != 0)
+    const Vector2 moveDirection = NormalizeSafe(movementIntent.visualDirection);
+    if (moveDirection.x != 0.0f || moveDirection.y != 0.0f)
     {
-        const Vector2 visualDirection = NormalizeStep(moveSnap);
-        hullAngleRad = AngleFromVectorVisual(visualDirection);
+        hullAngleRad = AngleFromVectorVisual(moveDirection);
     }
 
-    const float aimLengthSquared = aimVisual.x * aimVisual.x + aimVisual.y * aimVisual.y;
-    if (aimLengthSquared > 0.0004f)
+    const Vector2 aimDirection = NormalizeSafe(aimVisual);
+    if (aimDirection.x != 0.0f || aimDirection.y != 0.0f)
     {
-        turretAngleRad = AngleFromVectorVisual(NormalizeSafe(aimVisual));
+        turretAngleRad = AngleFromVectorVisual(aimDirection);
     }
-}
-
-void Tank::Render(const RenderContext& ctx) const
-{
-    if (TankVisual::IsComplete(visual))
-    {
-        TankVisual::RenderLayer(visual->hull, GetRenderSortPoint(), hullAngleRad, ctx);
-        TankVisual::RenderLayer(visual->turret, GetRenderSortPoint(), turretAngleRad, ctx);
-        return;
-    }
-
-    TankDebugRenderer::Render(*this, ctx);
 }

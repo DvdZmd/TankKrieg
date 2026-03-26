@@ -65,23 +65,6 @@ void World::Update(float dt)
 }
 
 /**
- * @brief Render all live entities using an isometric-friendly draw order.
- * @param ctx Rendering data shared across the current frame.
- */
-void World::Render(const RenderContext& ctx) const
-{
-    const std::vector<const Entity*> renderList = BuildRenderList();
-
-    for (const Entity* entity : renderList)
-    {
-        if (entity->IsVisible())
-        {
-            entity->Render(ctx);
-        }
-    }
-}
-
-/**
  * @brief Remove every entity owned by the world.
  */
 void World::Clear()

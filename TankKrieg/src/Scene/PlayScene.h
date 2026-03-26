@@ -7,12 +7,16 @@
 #include "Math/Vector2.h"
 #include "World/World.h"
 #include "World/TileMap.h"
+#include "World/TankMovementResolver.h"
 #include "Input/InputManager.h"
 #include "Entities/Tank.h"
-#include "Render/TankVisual.h"
 #include "Render/Camera2D.h"
 #include "Render/TileMapRenderer.h"
 #include "Render/DebugOverlay.h"
+#include "Render/TankVisualFactory.h"
+#include "Render/TankVisualDefinition.h"
+#include "Render/WorldVisualRegistry.h"
+#include "Render/WorldRenderer.h"
 
 class TextureManager;
 
@@ -30,13 +34,9 @@ public:
     bool WantsToQuit() const override;
 
 private:
-    Int2 WorldPositionToTile(const Vector2& worldPosition) const;
-    bool CanEnterTile(const Int2& tile) const;
-    void ApplyPlayerMovement(float deltaTime);
     void ClampCursorToMapBounds();
     void UpdateCamera();
     void InitializeTestBlockedTiles();
-    void BuildDefaultTankVisualDefinition();
     void EnsurePlayerTank();
 
 private:
@@ -48,11 +48,15 @@ private:
     InputManager input;
     Camera2D camera;
     TileMapRenderer tileMapRenderer;
+    WorldRenderer worldRenderer;
     DebugOverlay debugOverlay;
     TextureManager& textureManager;
+    TankMovementResolver tankMovementResolver;
+    TankVisualFactory tankVisualFactory;
 
     Tank* playerTank = nullptr;
-    TankVisual playerTankVisual{};
+    TankVisualDefinition playerTankVisual{};
+    WorldVisualRegistry worldVisualRegistry;
     Int2 cursorGridTile{ 0, 0 };
     Vector2 debugCrosshairGridTiles{ 0.0f, 0.0f };
 };

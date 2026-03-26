@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "Entities/Entity.h"
-#include "Render/RenderContext.h"
 
 class World
 {
@@ -49,10 +48,10 @@ public:
     void Update(float dt);
 
     /**
-     * @brief Render a transient isometric-sorted view of the world.
-     * @param ctx Rendering data shared across the current frame.
+     * @brief Build a transient render view sorted for isometric drawing.
+     * @return A sorted list of non-owning entity pointers.
      */
-    void Render(const RenderContext& ctx) const;
+    std::vector<const Entity*> BuildRenderList() const;
 
     /**
      * @brief Remove all entities and clear any queued additions.
@@ -181,12 +180,6 @@ private:
      * @brief Destroy entities that were marked for deferred removal.
      */
     void CollectPendingDestroy();
-
-    /**
-     * @brief Build a transient render view sorted for isometric drawing.
-     * @return A sorted list of non-owning entity pointers.
-     */
-    std::vector<const Entity*> BuildRenderList() const;
 
     EntityStorage entities;
     EntityStorage pendingAdditions;

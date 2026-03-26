@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Math/Vector2.h"
-#include "Render/RenderContext.h"
 
 enum class EntityCategory
 {
@@ -19,7 +18,6 @@ public:
     virtual ~Entity() = default;
 
     virtual void Update(float dt);
-    virtual void Render(const RenderContext& ctx) const = 0;
 
     virtual EntityCategory GetCategory() const;
     /**

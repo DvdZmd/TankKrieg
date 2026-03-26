@@ -4,10 +4,10 @@
     <ClCompile Include="src\Assets\TextureManager.cpp">
       <Filter>src\Assets</Filter>
     </ClCompile>
-    <ClCompile Include="src\Entities\Entity.cpp">
-      <Filter>src\Entities</Filter>
+    <ClCompile Include="src\Render\DirectionalSpriteFactory.cpp">
+      <Filter>src\Render</Filter>
     </ClCompile>
-    <ClCompile Include="src\Entities\SpriteEntity.cpp">
+    <ClCompile Include="src\Entities\Entity.cpp">
       <Filter>src\Entities</Filter>
     </ClCompile>
     <ClCompile Include="src\Entities\StaticEntity.cpp">
@@ -43,16 +43,34 @@
     <ClCompile Include="src\Render\DebugOverlay.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\Render\EntityRenderDispatcher.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
     <ClCompile Include="src\Render\Camera2D.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="src\Render\TankDebugRenderer.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\Render\TankRenderer.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\TankVisualFactory.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
     <ClCompile Include="src\Scene\PlayScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\World\TileMap.cpp">
+      <Filter>src\World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\WorldVisualRegistry.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\WorldRenderer.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World\TankMovementResolver.cpp">
       <Filter>src\World</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,9 +119,6 @@
     <ClInclude Include="src\Entities\Entity.h">
       <Filter>src\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entities\SpriteEntity.h">
-      <Filter>src\Entities</Filter>
-    </ClInclude>
     <ClInclude Include="src\Entities\StaticEntity.h">
       <Filter>src\Entities</Filter>
     </ClInclude>
@@ -140,14 +155,41 @@
     <ClInclude Include="src\Render\DebugOverlay.h">
       <Filter>src\Render</Filter>
     </ClInclude>
+    <ClInclude Include="src\Render\EntityRenderDispatcher.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
     <ClInclude Include="src\Render\Camera2D.h">
       <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="src\Render\TankDebugRenderer.h">
       <Filter>src\Render</Filter>
     </ClInclude>
-    <ClInclude Include="src\Render\TankVisual.h">
+    <ClInclude Include="src\Render\TankRenderer.h">
       <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\DirectionalSpriteFactory.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\TankDirectionResolver.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\TankVisualDefinition.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\TankVisualFactory.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\WorldRenderer.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\WorldVisualRegistry.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entities\TankVisualState.h">
+      <Filter>src\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\TankMovementResolver.h">
+      <Filter>src\World</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\IScene.h">
       <Filter>src\Scene</Filter>
@@ -160,13 +202,34 @@
     <None Include="doc\ARCHITECTURE.md">
       <Filter>doc</Filter>
     </None>
+    <None Include="doc\CAMERA_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
     <None Include="doc\CODING_GUIDELINES.md">
       <Filter>doc</Filter>
     </None>
     <None Include="doc\ENGINE_RULES.md">
       <Filter>doc</Filter>
     </None>
+    <None Include="doc\ENTITY_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\GAMEPLAY_RULES.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\INPUT_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\PHYSICS_COLLISION.md">
+      <Filter>doc</Filter>
+    </None>
     <None Include="doc\RENDER_PIPELINE.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\SPRITE_SYSTEM.md">
+      <Filter>doc</Filter>
+    </None>
+    <None Include="doc\WORLD_SYSTEM.md">
       <Filter>doc</Filter>
     </None>
   </ItemGroup>
