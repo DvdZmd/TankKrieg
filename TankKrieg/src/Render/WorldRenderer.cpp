@@ -3,26 +3,25 @@
 #include "Entities/Entity.h"
 #include "Entities/Tank.h"
 #include "Render/RenderContext.h"
-#include "Render/TankVisualDefinition.h"
+#include "Render/WorldVisualRegistry.h"
 #include "World/World.h"
 
-void WorldRenderer::Render(const World& world, const RenderContext& renderContext, const Tank* playerTank, const TankVisualDefinition* playerTankVisual) const
+void WorldRenderer::Render(const World& world, const RenderContext& renderContext, const WorldVisualRegistry& visualRegistry) const
 {
     const std::vector<const Entity*> renderList = world.BuildRenderList();
     for (const Entity* entity : renderList)
     {
         if (entity != nullptr && entity->IsVisible())
         {
-            RenderEntity(*entity, renderContext, playerTank, playerTankVisual);
+            RenderEntity(*entity, renderContext, visualRegistry);
         }
     }
 }
 
-void WorldRenderer::RenderEntity(const Entity& entity, const RenderContext& renderContext, const Tank* playerTank, const TankVisualDefinition* playerTankVisual) const
+void WorldRenderer::RenderEntity(const Entity& entity, const RenderContext& renderContext, const WorldVisualRegistry& visualRegistry) const
 {
     if (const auto* tank = dynamic_cast<const Tank*>(&entity))
     {
-        const TankVisualDefinition* tankVisual = (tank == playerTank) ? playerTankVisual : nullptr;
-        tankRenderer.Render(tank->BuildVisualState(), renderContext, tankVisual);
+        tankRenderer.Render(tank->BuildVisualState(), renderContext, visualRegistry.ResolveTankVisual(*tank));
     }
 }

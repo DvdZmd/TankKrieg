@@ -20,8 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Assets\TextureManager.cpp" />
+    <ClCompile Include="src\Render\DirectionalSpriteFactory.cpp" />
     <ClCompile Include="src\Entities\Entity.cpp" />
-    <ClCompile Include="src\Entities\SpriteEntity.cpp" />
     <ClCompile Include="src\Entities\StaticEntity.cpp" />
     <ClCompile Include="src\Scene\PlayScene.cpp" />
     <ClCompile Include="src\Entities\Tank.cpp" />
@@ -36,7 +36,9 @@
     <ClCompile Include="src\Render\TankDirectionResolver.cpp" />
     <ClCompile Include="src\Render\TankDebugRenderer.cpp" />
     <ClCompile Include="src\Render\TankRenderer.cpp" />
+    <ClCompile Include="src\Render\TankVisualFactory.cpp" />
     <ClCompile Include="src\Render\TileMapRenderer.cpp" />
+    <ClCompile Include="src\Render\WorldVisualRegistry.cpp" />
     <ClCompile Include="src\Render\WorldRenderer.cpp" />
     <ClCompile Include="src\World\TankMovementResolver.cpp" />
     <ClCompile Include="src\World\TileMap.cpp" />
@@ -44,11 +46,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Assets\TextureManager.h" />
+    <ClInclude Include="src\Render\DirectionalSpriteFactory.h" />
     <ClInclude Include="src\Scene\IScene.h" />
     <ClInclude Include="src\Scene\PlayScene.h" />
     <ClInclude Include="src\Render\DebugOverlay.h" />
     <ClInclude Include="src\Entities\Entity.h" />
-    <ClInclude Include="src\Entities\SpriteEntity.h" />
     <ClInclude Include="src\Entities\StaticEntity.h" />
     <ClInclude Include="src\Entities\Tank.h" />
     <ClInclude Include="src\Entities\TankVisualState.h" />
@@ -65,8 +67,10 @@
     <ClInclude Include="src\Render\TankDirectionResolver.h" />
     <ClInclude Include="src\Render\TankDebugRenderer.h" />
     <ClInclude Include="src\Render\TankRenderer.h" />
+    <ClInclude Include="src\Render\TankVisualFactory.h" />
     <ClInclude Include="src\Render\TankVisualDefinition.h" />
     <ClInclude Include="src\Render\TileMapRenderer.h" />
+    <ClInclude Include="src\Render\WorldVisualRegistry.h" />
     <ClInclude Include="src\Render\WorldRenderer.h" />
     <ClInclude Include="src\World\TankMovementResolver.h" />
     <ClInclude Include="src\World\TileMap.h" />

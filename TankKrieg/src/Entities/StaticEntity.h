@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Entities/SpriteEntity.h"
+#include "Entities/Entity.h"
 
-class StaticEntity : public SpriteEntity
+class StaticEntity : public Entity
 {
 public:
     explicit StaticEntity(EntityCategory category = EntityCategory::Obstacle);

@@ -21,6 +21,7 @@ struct DirectionalSpriteSet
     }
 };
 
+// Static render-side description for a tank appearance.
 struct TankVisualDefinition
 {
     DirectionalSpriteSet hull{};

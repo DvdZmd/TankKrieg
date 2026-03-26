@@ -13,7 +13,9 @@
 #include "Render/Camera2D.h"
 #include "Render/TileMapRenderer.h"
 #include "Render/DebugOverlay.h"
+#include "Render/TankVisualFactory.h"
 #include "Render/TankVisualDefinition.h"
+#include "Render/WorldVisualRegistry.h"
 #include "Render/WorldRenderer.h"
 
 class TextureManager;
@@ -35,7 +37,6 @@ private:
     void ClampCursorToMapBounds();
     void UpdateCamera();
     void InitializeTestBlockedTiles();
-    void BuildDefaultTankVisualDefinition();
     void EnsurePlayerTank();
 
 private:
@@ -51,9 +52,11 @@ private:
     DebugOverlay debugOverlay;
     TextureManager& textureManager;
     TankMovementResolver tankMovementResolver;
+    TankVisualFactory tankVisualFactory;
 
     Tank* playerTank = nullptr;
     TankVisualDefinition playerTankVisual{};
+    WorldVisualRegistry worldVisualRegistry;
     Int2 cursorGridTile{ 0, 0 };
     Vector2 debugCrosshairGridTiles{ 0.0f, 0.0f };
 };
