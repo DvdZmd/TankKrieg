@@ -2,6 +2,10 @@
 #include "Math/IsoUtils.h"
 #include "Render/IsoDebugDraw.h"
 
+/**
+ * @brief Render the debug cursor tile and movement crosshair.
+ * @param ctx Rendering data shared across the current frame.
+ */
 void DebugOverlay::Render(const RenderContext& ctx) const
 {
     const SDL_FPoint cursorCenterPx = IsoUtils::GridToScreenF(

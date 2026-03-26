@@ -2,6 +2,12 @@
 #include "Math/IsoUtils.h"
 #include <cmath>
 
+/**
+ * @brief Quantize an analog stick direction to one of eight visual directions.
+ * @param v Analog stick direction in visual space.
+ * @param dz Minimum stick magnitude required before a direction is emitted.
+ * @return The snapped visual direction, or { 0, 0 } when the stick is inside the deadzone.
+ */
 static Int2 QuantizeStickTo8Visual(const Vector2& v, float dz)
 {
 	if (v.Length() < dz) return { 0, 0 };
@@ -12,10 +18,19 @@ static Int2 QuantizeStickTo8Visual(const Vector2& v, float dz)
 	return s; // visual space: x=left/right, y=up/down on screen
 }
 
+/**
+ * @brief Suppress small analog input values around the deadzone.
+ * @param v Raw axis value to filter.
+ * @param dz Deadzone threshold applied symmetrically around zero.
+ * @return Zero when the value is inside the deadzone; otherwise the original value.
+ */
 static float ApplyDeadzone(float v, float dz) {
 	return (std::fabs(v) < dz) ? 0.0f : v;
 }
 
+/**
+ * @brief Open supported input devices after SDL initialization.
+ */
 void InputManager::Initialize() {
 	// SDL must be initialized before this.
 	if (SDL_HasGamepad()) { // true if at least one gamepad is connected
@@ -39,6 +54,9 @@ void InputManager::Initialize() {
 	}
 }
 
+/**
+ * @brief Release any gamepad currently opened by the input manager.
+ */
 void InputManager::Shutdown() {
 	if (gamepad) {
 		SDL_CloseGamepad(gamepad);
@@ -46,6 +64,10 @@ void InputManager::Shutdown() {
 	}
 }
 
+/**
+ * @brief Poll SDL input and build the final movement, aim, and cursor state for the frame.
+ * @param dt Elapsed time in seconds since the previous frame.
+ */
 void InputManager::Update(float dt) {
 	quit = false;
 
@@ -84,6 +106,10 @@ void InputManager::Update(float dt) {
 
 }
 
+/**
+ * @brief Process a single SDL event that affects input manager state.
+ * @param e Event polled from SDL for the current frame.
+ */
 void InputManager::ProcessEvent(const SDL_Event& e) {
 	if (e.type == SDL_EVENT_QUIT) {
 		quit = true;
@@ -92,6 +118,9 @@ void InputManager::ProcessEvent(const SDL_Event& e) {
 	// Optional (future): handle controller connect/disconnect events here.
 }
 
+/**
+ * @brief Read keyboard state and update movement intent for the current frame.
+ */
 void InputManager::UpdateKeyboardState() {
 	keyboardMove = {};
 
@@ -112,6 +141,9 @@ void InputManager::UpdateKeyboardState() {
 	}
 }
 
+/**
+ * @brief Read active gamepad state and update movement, aim, and D-pad inputs.
+ */
 void InputManager::UpdateGamepadState() {
 	gamepadMove = {};
 	gamepadAim = {}; // NEW
@@ -149,6 +181,9 @@ void InputManager::UpdateGamepadState() {
 	dpadRightNow = SDL_GetGamepadButton(gamepad, SDL_GAMEPAD_BUTTON_DPAD_RIGHT);
 }
 
+/**
+ * @brief Merge keyboard and gamepad state into final per-frame control values.
+ */
 void InputManager::ComposeFinalMove() {
 	// 1) CHASSIS MOVE: if left stick is moved, use it; otherwise keyboard.
 	finalMove = (gamepadMove.Length() > 0.0f) ? gamepadMove : keyboardMove;
@@ -205,12 +240,24 @@ void InputManager::ComposeFinalMove() {
 }
 
 
+/**
+ * @brief Return the continuous movement input assembled for the current frame.
+ * @return The final movement vector selected from keyboard or gamepad input.
+ */
 Vector2 InputManager::GetMovementVector() const {
 	return finalMove;
 }
 
+/**
+ * @brief Return the pending cursor movement step for the current frame.
+ * @return The discrete isometric grid step requested by the player.
+ */
 Int2 InputManager::GetCursorStep() const { return cursorStep; }
 
+/**
+ * @brief Report whether a quit event was observed during the current frame.
+ * @return True when the application should stop running; otherwise false.
+ */
 bool InputManager::QuitRequested() const {
 	return quit;
 }

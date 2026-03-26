@@ -4,6 +4,12 @@
 #include "Render/IsoDebugDraw.h"
 #include <Render/Helper.h>
 
+/**
+ * @brief Quantize a visual direction to one of eight compass directions.
+ * @param v Visual-space direction to snap.
+ * @param deadzone Minimum magnitude required before a direction is emitted.
+ * @return The snapped visual direction, or { 0, 0 } when the input is too small.
+ */
 static Int2 SnapVisual8(const Vector2& v, float deadzone = 0.25f)
 {
 	const float lenSq = v.x * v.x + v.y * v.y;
@@ -15,6 +21,11 @@ static Int2 SnapVisual8(const Vector2& v, float deadzone = 0.25f)
 	return s;
 }
 
+/**
+ * @brief Convert a discrete integer step into a normalized floating-point direction.
+ * @param s Grid or visual step with integer components.
+ * @return The normalized direction, or { 0, 0 } when the step is zero.
+ */
 static Vector2 NormalizeStep(const Int2& s)
 {
 	Vector2 v{ (float)s.x, (float)s.y };
@@ -25,11 +36,21 @@ static Vector2 NormalizeStep(const Int2& s)
 }
 
 
+/**
+ * @brief Compute the squared length of a vector.
+ * @param v Vector to measure.
+ * @return The squared magnitude of the supplied vector.
+ */
 static float LengthSq(const Vector2& v)
 {
 	return v.x * v.x + v.y * v.y;
 }
 
+/**
+ * @brief Normalize a vector while preserving zero-length safety.
+ * @param v Vector to normalize.
+ * @return The normalized vector, or { 0, 0 } when the input is near zero.
+ */
 static Vector2 NormalizeSafe(const Vector2& v)
 {
 	const float lsq = LengthSq(v);
@@ -38,6 +59,12 @@ static Vector2 NormalizeSafe(const Vector2& v)
 	return { v.x * inv, v.y * inv };
 }
 
+/**
+ * @brief Rotate a vector around the origin by the supplied angle.
+ * @param v Vector to rotate.
+ * @param a Rotation angle in radians.
+ * @return The rotated vector.
+ */
 static Vector2 Rotate(const Vector2& v, float a)
 {
 	const float c = std::cos(a);
@@ -45,6 +72,13 @@ static Vector2 Rotate(const Vector2& v, float a)
 	return { v.x * c - v.y * s, v.x * s + v.y * c };
 }
 
+/**
+ * @brief Draw a thin triangle outline using SDL line primitives.
+ * @param r Renderer that receives the draw calls.
+ * @param a First triangle vertex.
+ * @param b Second triangle vertex.
+ * @param c Third triangle vertex.
+ */
 static void DrawTriangleOutline(SDL_Renderer* r, const SDL_FPoint& a, const SDL_FPoint& b, const SDL_FPoint& c)
 {
 	SDL_RenderLine(r, a.x, a.y, b.x, b.y);
@@ -52,18 +86,32 @@ static void DrawTriangleOutline(SDL_Renderer* r, const SDL_FPoint& a, const SDL_
 	SDL_RenderLine(r, c.x, c.y, a.x, a.y);
 }
 
+/**
+ * @brief Convert a visual direction vector into an angle in radians.
+ * @param v Direction in visual or screen space.
+ * @return The angle in radians matching the supplied direction.
+ */
 float Tank::AngleFromVectorVisual(const Vector2& v)
 {
 	// Visual/screen space: +x right, +y down -> atan2(y, x) matches SDL coordinates
 	return std::atan2(v.y, v.x);
 }
 
+/**
+ * @brief Set the tank position directly in grid-space tile coordinates.
+ * @param gxTiles Grid X position measured in tiles.
+ * @param gyTiles Grid Y position measured in tiles.
+ */
 void Tank::SetGridPosition(float gxTiles, float gyTiles)
 {
 	position.x = gxTiles;
 	position.y = gyTiles;
 }
 
+/**
+ * @brief Update hull motion from movement input and turret rotation from aim input.
+ * @param dt Elapsed time in seconds since the previous update.
+ */
 void Tank::Update(float dt)
 {
 	// --- Hull movement: SNAP to 8 directions (visual), then map to grid
@@ -92,6 +140,10 @@ void Tank::Update(float dt)
 	}
 }
 
+/**
+ * @brief Render the tank at its current isometric position.
+ * @param ctx Rendering data shared across the current frame.
+ */
 void Tank::Render(const RenderContext& ctx) const
 {
 	SDL_Renderer* renderer = ctx.renderer;

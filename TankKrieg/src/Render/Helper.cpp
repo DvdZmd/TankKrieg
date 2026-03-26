@@ -6,6 +6,14 @@
 
 namespace RenderHelper
 {
+    /**
+     * @brief Draw a thick line segment by expanding it into a rendered quad.
+     * @param renderer Renderer that receives the draw calls.
+     * @param a Start point of the line segment.
+     * @param b End point of the line segment.
+     * @param thickness Line thickness in pixels.
+     * @param color Color applied to the generated geometry.
+     */
     void DrawThickLine(
         SDL_Renderer* renderer,
         const SDL_FPoint& a,
@@ -44,6 +52,15 @@ namespace RenderHelper
         SDL_RenderGeometry(renderer, nullptr, verts, 4, indices, 6);
     }
 
+    /**
+     * @brief Draw a triangle outline by rendering three thick line segments.
+     * @param renderer Renderer that receives the draw calls.
+     * @param a First triangle vertex.
+     * @param b Second triangle vertex.
+     * @param c Third triangle vertex.
+     * @param thickness Outline thickness in pixels.
+     * @param color Color applied to the generated geometry.
+     */
     void DrawTriangleThick(
         SDL_Renderer* renderer,
         const SDL_FPoint& a,

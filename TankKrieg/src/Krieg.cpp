@@ -11,10 +11,6 @@ Krieg::~Krieg() {
     Shutdown();
 }
 
-/// <summary>
-/// Initializes the game: sets up SDL, creates the window and renderer, initializes input, camera, and player tank.
-/// </summary>
-/// <returns>True if initialization succeeds; false otherwise.</returns>
 bool Krieg::Initialize() {
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
         std::cerr << "SDL init failed: " << SDL_GetError() << std::endl;
@@ -47,9 +43,6 @@ bool Krieg::Initialize() {
     return true;
 }
 
-/// <summary>
-/// Main game loop: calculates delta time, processes input, updates game state, and renders the scene.
-/// </summary>
 void Krieg::Run() {
     Uint64 lastTick = SDL_GetTicks();
 
@@ -64,10 +57,6 @@ void Krieg::Run() {
     }
 }
 
-/// <summary>
-/// Processes player input: updates input state, converts visual movement to grid-space movement to update a debug crosshair, and handles quit requests.
-/// </summary>
-/// <param name="deltaTime">Elapsed time in seconds since the last update; used to scale time-dependent movement of the debug crosshair.</param>
 void Krieg::ProcessInput(float deltaTime) {
     input.Update(deltaTime);
 
@@ -85,10 +74,6 @@ void Krieg::ProcessInput(float deltaTime) {
     }
 }
 
-/// <summary>
-/// Performs per-frame game updates: processes input, moves and clamps the cursor, applies player input intents, updates all world entities and debug overlay, and updates the camera.
-/// </summary>
-/// <param name="deltaTime">Elapsed time since the last update, in seconds; used to advance the simulation.</param>
 void Krieg::Update(float deltaTime) {
     // Move the cursor one tile per key press or D-pad press.
     Int2 stepGridTiles = input.GetCursorStep();
@@ -124,9 +109,6 @@ void Krieg::Update(float deltaTime) {
     }
 }
 
-/// <summary>
-/// Renders the current scene to the object's SDL renderer: clears the screen with a background color, builds a RenderContext from the object's state, invokes the tile map, world, and debug overlay renderers, and presents the rendered frame.
-/// </summary>
 void Krieg::Render() {
     SDL_SetRenderDrawColor(renderer, 25, 25, 25, 255);
     SDL_RenderClear(renderer);
@@ -145,6 +127,9 @@ void Krieg::Render() {
     SDL_RenderPresent(renderer);
 }
 
+/**
+ * @brief Shut down input, rendering objects, and SDL subsystems in a safe order.
+ */
 void Krieg::Shutdown() {
     // Idempotent shutdown: safe to call more than once.
     input.Shutdown();

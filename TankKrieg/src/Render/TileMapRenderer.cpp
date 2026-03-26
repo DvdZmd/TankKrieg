@@ -2,6 +2,11 @@
 #include "Math/IsoUtils.h"
 #include "Render/IsoDebugDraw.h"
 
+/**
+ * @brief Render filled tiles and their outlines for the current map.
+ * @param ctx Rendering data shared across the current frame.
+ * @param map Tile map that defines the visible grid bounds.
+ */
 void TileMapRenderer::Render(const RenderContext& ctx, const TileMap& map) const
 {
     const SDL_FColor tileFillColor{ 1.0f, 1.0f, 1.0f, 1.0f };

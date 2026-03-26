@@ -5,14 +5,40 @@
 
 class InputManager {
 public:
+    /**
+     * @brief Initialize input devices managed by the game.
+     */
     void Initialize();
+    /**
+     * @brief Poll SDL input, refresh device state, and compose frame input values.
+     * @param dt Elapsed time in seconds since the previous frame.
+     */
     void Update(float dt);
+    /**
+     * @brief Release any input devices opened by the manager.
+     */
     void Shutdown();
 
+    /**
+     * @brief Return the current turret or aiming direction.
+     * @return The final aim vector for the current frame.
+     */
     Vector2 GetAimVector() const { return aim; }
+    /**
+     * @brief Return the continuous movement direction requested this frame.
+     * @return The normalized movement vector assembled from active input sources.
+     */
     Vector2 GetMovementVector() const;// Continuous movement (keyboard arrows / left stick)
+    /**
+     * @brief Return the discrete cursor step requested this frame.
+     * @return A single grid step derived from keyboard, D-pad, or analog repeat input.
+     */
     Int2 GetCursorStep() const;// Discrete cursor movement (one grid step per press)
 
+    /**
+     * @brief Report whether SDL requested application shutdown during this frame.
+     * @return True when a quit event was received; otherwise false.
+     */
     bool QuitRequested() const;
 
 
@@ -42,8 +68,21 @@ private:
     bool quit = false;
     SDL_Gamepad* gamepad = nullptr;
 
+    /**
+     * @brief Handle a single SDL event relevant to the input manager.
+     * @param e Event polled from SDL for the current frame.
+     */
     void ProcessEvent(const SDL_Event& e);
+    /**
+     * @brief Read keyboard state and update keyboard-driven movement inputs.
+     */
     void UpdateKeyboardState();
+    /**
+     * @brief Read connected gamepad state and update analog and D-pad inputs.
+     */
     void UpdateGamepadState();
+    /**
+     * @brief Merge per-device input state into the frame's final control values.
+     */
     void ComposeFinalMove();
 };

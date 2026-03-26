@@ -10,7 +10,13 @@
 class World
 {
 public:
+    /**
+     * @brief Construct an empty world container.
+     */
     World() = default;
+    /**
+     * @brief Destroy the world and any owned entities.
+     */
     ~World() = default;
 
     // Non-copyable (unique_ptr ownership)
@@ -21,21 +27,34 @@ public:
     World(World&&) noexcept = default;
     World& operator=(World&&) noexcept = default;
 
-    // Adds an entity to the world and returns a raw pointer for convenience.
-    // The World remains the owner.
+    /**
+     * @brief Add a newly created entity to the world.
+     * @param entity Entity instance transferred into world ownership.
+     * @return A raw pointer to the stored entity, or nullptr when the input is null.
+     */
     Entity* Add(std::unique_ptr<Entity> entity);
 
-    // Calls Update on all entities.
+    /**
+     * @brief Update every entity currently stored in the world.
+     * @param dt Elapsed time in seconds since the previous update.
+     */
     void Update(float dt);
 
-    // Calls Render on all entities.
-    // In a later step we will add proper isometric depth sorting here.
+    /**
+     * @brief Render every entity currently stored in the world.
+     * @param ctx Rendering data shared across the current frame.
+     */
     void Render(const RenderContext& ctx) const;
 
-    // Basic lifecycle
+    /**
+     * @brief Remove all entities from the world.
+     */
     void Clear();
 
-    // Accessors (useful for debugging / tools)
+    /**
+     * @brief Return the number of entities currently owned by the world.
+     * @return The number of stored entities.
+     */
     std::size_t Count() const { return entities.size(); }
 
 private:

@@ -5,8 +5,11 @@
 
 namespace IsoUtils
 {
-    // Converts 2D "visual screen directions" (x right/left, y down/up)
-    // into isometric grid step (gx, gy).
+    /**
+     * @brief Map a visual input direction to a discrete isometric grid step.
+     * @param v Direction in screen-like space where positive X moves right and positive Y moves down.
+     * @return The corresponding grid-space step, or { 0, 0 } when the direction is unsupported.
+     */
     inline Int2 VisualToIsoGridStep(const Int2& v)
     {
         // 4-dir (visual)
@@ -24,6 +27,16 @@ namespace IsoUtils
         return { 0, 0 };
     }
 
+    /**
+     * @brief Project a floating-point grid position into isometric screen space.
+     * @param gx Grid X coordinate in tile space.
+     * @param gy Grid Y coordinate in tile space.
+     * @param tileWidthPx Width of one tile in pixels.
+     * @param tileHeightPx Height of one tile in pixels.
+     * @param originXPx Screen-space X origin used for the projection.
+     * @param originYPx Screen-space Y origin used for the projection.
+     * @return The projected screen-space position in pixels.
+     */
     inline SDL_FPoint GridToScreenF(float gx, float gy, int tileWidthPx, int tileHeightPx, int originXPx, int originYPx)
     {
         const float sx = originXPx + (gx - gy) * (tileWidthPx * 0.5f);
@@ -31,18 +44,28 @@ namespace IsoUtils
         return { sx, sy };
     }
 
+    /**
+     * @brief Project an integer grid position into isometric screen space.
+     * @param gx Grid X coordinate in tile space.
+     * @param gy Grid Y coordinate in tile space.
+     * @param tileWidthPx Width of one tile in pixels.
+     * @param tileHeightPx Height of one tile in pixels.
+     * @param originXPx Screen-space X origin used for the projection.
+     * @param originYPx Screen-space Y origin used for the projection.
+     * @return The projected screen-space position in pixels.
+     */
     inline SDL_FPoint GridToScreen(int gx, int gy, int tileWidthPx, int tileHeightPx, int originXPx, int originYPx)
     {
         return GridToScreenF((float)gx, (float)gy, tileWidthPx, tileHeightPx, originXPx, originYPx);
     }
 
-    // Converts a continuous direction in VISUAL space (screen-like: +x right, +y down)
-    // into a continuous direction in ISO GRID space (gx, gy).
-    // The output is normalized (unless input is near zero).
-	/// <param name="visualDir">Input direction in visual/screen space, where +x is right and +y is down. Can be any length; output will be normalized to length 1 (unless input is near zero).</param>
-	/// <param name="tileWidthPx">Tile width in pixels, used to account for non-square isometric tiles.</param>
-    /// <param name="tileHeightPx">Tile height in pixels, used to account for non-square isometric tiles.</param>
-    /// <returns>Normalized direction vector in ISO GRID space.</returns>
+    /**
+     * @brief Convert a continuous visual direction into normalized grid-space movement.
+     * @param visualDir Direction in screen-like space with arbitrary magnitude.
+     * @param tileWidthPx Tile width in pixels used by the isometric projection.
+     * @param tileHeightPx Tile height in pixels used by the isometric projection.
+     * @return The normalized grid-space direction, or { 0, 0 } when the input is near zero.
+     */
     inline Vector2 VisualDirToGridDir(const Vector2& visualDir, int tileWidthPx, int tileHeightPx)
     {
         // Safety
@@ -77,9 +100,12 @@ namespace IsoUtils
         return gridDir;
     }
 
-    // Snaps a direction to 8-way in GRID space.
-    // Input should be a direction vector (any length). Output is {-1,0,1} in each axis,
-    // normalized to length 1 for diagonals as well.
+    /**
+     * @brief Quantize a grid-space direction to one of eight movement directions.
+     * @param gridDir Direction in grid space with any magnitude.
+     * @param deadzone Minimum input magnitude required before a direction is emitted.
+     * @return The snapped direction, or { 0, 0 } when the input falls inside the deadzone.
+     */
     inline Vector2 SnapGridDir8(const Vector2& gridDir, float deadzone = 0.2f)
     {
         const float lenSq = gridDir.x * gridDir.x + gridDir.y * gridDir.y;
