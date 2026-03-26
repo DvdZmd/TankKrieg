@@ -1,23 +1,51 @@
 #pragma once
 
+#include <variant>
 #include <vector>
 
-class Tank;
+class Entity;
 struct TankVisualDefinition;
+
+class WorldVisualDefinitionBinding
+{
+public:
+    WorldVisualDefinitionBinding() = default;
+
+    static WorldVisualDefinitionBinding Tank(const TankVisualDefinition* visualDefinition)
+    {
+        return WorldVisualDefinitionBinding(visualDefinition);
+    }
+
+    const TankVisualDefinition* GetTank() const
+    {
+        const auto* tankVisual = std::get_if<const TankVisualDefinition*>(&value);
+        return tankVisual != nullptr ? *tankVisual : nullptr;
+    }
+
+private:
+    using Value = std::variant<std::monostate, const TankVisualDefinition*>;
+
+    explicit WorldVisualDefinitionBinding(const TankVisualDefinition* visualDefinition)
+        : value(visualDefinition)
+    {
+    }
+
+    Value value{};
+};
 
 class WorldVisualRegistry
 {
 public:
     void Clear();
-    void BindTank(const Tank* tank, const TankVisualDefinition* visualDefinition);
-    const TankVisualDefinition* ResolveTankVisual(const Tank& tank) const;
+    void Bind(const Entity* entity, const WorldVisualDefinitionBinding& visualDefinition);
+    WorldVisualDefinitionBinding Resolve(const Entity& entity) const;
 
 private:
-    struct TankVisualBinding
+    struct WorldVisualBinding
     {
-        const Tank* tank = nullptr;
-        const TankVisualDefinition* visualDefinition = nullptr;
+        const Entity* entity = nullptr;
+        WorldVisualDefinitionBinding visualDefinition{};
     };
 
-    std::vector<TankVisualBinding> tankBindings;
+    std::vector<WorldVisualBinding> bindings;
 };

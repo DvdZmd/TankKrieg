@@ -1,41 +1,40 @@
 #include "Render/WorldVisualRegistry.h"
 
-#include "Entities/Tank.h"
-#include "Render/TankVisualDefinition.h"
+#include "Entities/Entity.h"
 
 void WorldVisualRegistry::Clear()
 {
-    tankBindings.clear();
+    bindings.clear();
 }
 
-void WorldVisualRegistry::BindTank(const Tank* tank, const TankVisualDefinition* visualDefinition)
+void WorldVisualRegistry::Bind(const Entity* entity, const WorldVisualDefinitionBinding& visualDefinition)
 {
-    if (tank == nullptr)
+    if (entity == nullptr)
     {
         return;
     }
 
-    for (TankVisualBinding& binding : tankBindings)
+    for (WorldVisualBinding& binding : bindings)
     {
-        if (binding.tank == tank)
+        if (binding.entity == entity)
         {
             binding.visualDefinition = visualDefinition;
             return;
         }
     }
 
-    tankBindings.push_back(TankVisualBinding{ tank, visualDefinition });
+    bindings.push_back(WorldVisualBinding{ entity, visualDefinition });
 }
 
-const TankVisualDefinition* WorldVisualRegistry::ResolveTankVisual(const Tank& tank) const
+WorldVisualDefinitionBinding WorldVisualRegistry::Resolve(const Entity& entity) const
 {
-    for (const TankVisualBinding& binding : tankBindings)
+    for (const WorldVisualBinding& binding : bindings)
     {
-        if (binding.tank == &tank)
+        if (binding.entity == &entity)
         {
             return binding.visualDefinition;
         }
     }
 
-    return nullptr;
+    return {};
 }

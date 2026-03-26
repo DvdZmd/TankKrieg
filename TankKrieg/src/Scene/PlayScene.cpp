@@ -4,6 +4,7 @@
 
 #include "Math/IsoUtils.h"
 #include "Render/RenderContext.h"
+#include "Render/WorldVisualRegistry.h"
 
 PlayScene::PlayScene(int viewportWidthPx, int viewportHeightPx, TextureManager& textureManagerRef)
     : textureManager(textureManagerRef)
@@ -60,9 +61,9 @@ void PlayScene::Update(float deltaTime)
     ClampCursorToMapBounds();
 
     if (playerTank) {
-        playerTank->SetMoveVisual(moveVisual);
+        playerTank->SetMovementIntent(TankMovementIntent::FromVisualDirection(moveVisual));
         playerTank->SetAimVisual(input.GetAimVector());
-        tankMovementResolver.ApplyMovement(*playerTank, deltaTime, tileMap);
+        tankMovementResolver.ApplyMovement(*playerTank, playerTank->GetMovementIntent(), deltaTime, tileMap);
     }
 
     debugOverlay.SetCursorTile(cursorGridTile);
@@ -136,5 +137,5 @@ void PlayScene::EnsurePlayerTank()
     auto tank = std::make_unique<Tank>();
     tank->SetGridPosition(4.0f, 4.0f);
     playerTank = static_cast<Tank*>(world.Add(std::move(tank)));
-    worldVisualRegistry.BindTank(playerTank, &playerTankVisual);
+    worldVisualRegistry.Bind(playerTank, WorldVisualDefinitionBinding::Tank(&playerTankVisual));
 }

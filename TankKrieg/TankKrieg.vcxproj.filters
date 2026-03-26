@@ -43,6 +43,9 @@
     <ClCompile Include="src\Render\DebugOverlay.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
+    <ClCompile Include="src\Render\EntityRenderDispatcher.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
     <ClCompile Include="src\Render\Camera2D.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
@@ -150,6 +153,9 @@
       <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="src\Render\DebugOverlay.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\EntityRenderDispatcher.h">
       <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="src\Render\Camera2D.h">

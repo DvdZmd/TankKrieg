@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Entities/TankMovementIntent.h"
 #include "Entities/Unit.h"
 #include "Entities/TankVisualState.h"
 
@@ -19,9 +20,12 @@ public:
     TankVisualState BuildVisualState() const;
     void Update(float dt) override;
 
-    void SetMoveVisual(const Vector2& value) { moveVisual = value; }
+    void SetMovementIntent(const TankMovementIntent& value) { movementIntent = value; }
+    const TankMovementIntent& GetMovementIntent() const { return movementIntent; }
+
+    void SetMoveVisual(const Vector2& value) { movementIntent = TankMovementIntent::FromVisualDirection(value); }
     void SetAimVisual(const Vector2& value) { aimVisual = value; }
-    Vector2 GetMoveVisual() const { return moveVisual; }
+    Vector2 GetMoveVisual() const { return movementIntent.visualDirection; }
     Vector2 GetAimVisual() const { return aimVisual; }
 
     float GetHullAngleRadians() const { return hullAngleRad; }
@@ -30,7 +34,7 @@ public:
 private:
     static float AngleFromVectorVisual(const Vector2& v);
 
-    Vector2 moveVisual{};
+    TankMovementIntent movementIntent{};
     Vector2 aimVisual{};
     float hullAngleRad = 0.0f;
     float turretAngleRad = 0.0f;

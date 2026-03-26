@@ -31,6 +31,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Render\Camera2D.cpp" />
     <ClCompile Include="src\Render\DebugOverlay.cpp" />
+    <ClCompile Include="src\Render\EntityRenderDispatcher.cpp" />
     <ClCompile Include="src\Render\Helper.cpp" />
     <ClCompile Include="src\Render\IsoDebugDraw.cpp" />
     <ClCompile Include="src\Render\TankDirectionResolver.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="src\Scene\IScene.h" />
     <ClInclude Include="src\Scene\PlayScene.h" />
     <ClInclude Include="src\Render\DebugOverlay.h" />
+    <ClInclude Include="src\Render\EntityRenderDispatcher.h" />
     <ClInclude Include="src\Entities\Entity.h" />
     <ClInclude Include="src\Entities\StaticEntity.h" />
     <ClInclude Include="src\Entities\Tank.h" />

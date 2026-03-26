@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Render/EntityRenderDispatcher.h"
 #include "Render/TankRenderer.h"
 
 class Entity;
 class World;
-struct RenderContext;
 class WorldVisualRegistry;
+struct RenderContext;
 
 class WorldRenderer
 {
@@ -16,4 +17,5 @@ private:
     void RenderEntity(const Entity& entity, const RenderContext& renderContext, const WorldVisualRegistry& visualRegistry) const;
 
     TankRenderer tankRenderer;
+    EntityRenderDispatcher entityRenderDispatcher{ tankRenderer };
 };

@@ -53,7 +53,7 @@ TankVisualState Tank::BuildVisualState() const
 
 void Tank::Update(float)
 {
-    const Vector2 moveDirection = NormalizeSafe(moveVisual);
+    const Vector2 moveDirection = NormalizeSafe(movementIntent.visualDirection);
     if (moveDirection.x != 0.0f || moveDirection.y != 0.0f)
     {
         hullAngleRad = AngleFromVectorVisual(moveDirection);

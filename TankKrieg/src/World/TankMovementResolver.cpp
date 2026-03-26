@@ -3,25 +3,12 @@
 #include "World/TankMovementResolver.h"
 
 #include "Entities/Tank.h"
+#include "Entities/TankMovementIntent.h"
 #include "Math/IsoUtils.h"
 #include "World/TileMap.h"
 
 namespace
 {
-    Int2 SnapVisual8(const Vector2& value, float deadzone = 0.25f)
-    {
-        const float lengthSquared = value.x * value.x + value.y * value.y;
-        if (lengthSquared < deadzone * deadzone)
-        {
-            return { 0, 0 };
-        }
-
-        Int2 snapped{ 0, 0 };
-        snapped.x = (value.x > deadzone) ? 1 : (value.x < -deadzone ? -1 : 0);
-        snapped.y = (value.y > deadzone) ? 1 : (value.y < -deadzone ? -1 : 0);
-        return snapped;
-    }
-
     Vector2 NormalizeStep(const Int2& step)
     {
         Vector2 direction{ static_cast<float>(step.x), static_cast<float>(step.y) };
@@ -36,16 +23,14 @@ namespace
     }
 }
 
-void TankMovementResolver::ApplyMovement(Tank& tank, float deltaTime, const TileMap& tileMap) const
+void TankMovementResolver::ApplyMovement(Tank& tank, const TankMovementIntent& movementIntent, float deltaTime, const TileMap& tileMap) const
 {
-    const Int2 moveSnap = SnapVisual8(tank.GetMoveVisual());
-    if (moveSnap.x == 0 && moveSnap.y == 0)
+    const Vector2 gridDirection = BuildGridDirection(movementIntent);
+    if (gridDirection.x == 0.0f && gridDirection.y == 0.0f)
     {
         return;
     }
 
-    const Int2 gridStep = IsoUtils::VisualToIsoGridStep(moveSnap);
-    const Vector2 gridDirection = NormalizeStep(gridStep);
     const Vector2 moveDelta = gridDirection * tank.GetMoveSpeed() * deltaTime;
     if (moveDelta.x == 0.0f && moveDelta.y == 0.0f)
     {
@@ -71,6 +56,17 @@ void TankMovementResolver::ApplyMovement(Tank& tank, float deltaTime, const Tile
     {
         tank.SetWorldPosition(yOnlyPosition);
     }
+}
+
+Vector2 TankMovementResolver::BuildGridDirection(const TankMovementIntent& movementIntent)
+{
+    if (!movementIntent.HasMovement())
+    {
+        return { 0.0f, 0.0f };
+    }
+
+    const Int2 gridStep = IsoUtils::VisualToIsoGridStep(movementIntent.visualStep);
+    return NormalizeStep(gridStep);
 }
 
 Int2 TankMovementResolver::WorldPositionToTile(const Vector2& worldPosition)
